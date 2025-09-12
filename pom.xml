@@ -107,7 +107,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        
+
         <!-- Micrometer Tracing with Zipkin -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
