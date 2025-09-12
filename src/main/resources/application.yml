@@ -5,7 +5,7 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
-    flyway:
+  flyway:
       enabled: true
       locations: classpath:db/migration
       baseline-on-migrate: true

@@ -3,7 +3,6 @@ package com.rhenan.taskflow.infra.persistence.jpa.mapper;
 import com.rhenan.taskflow.domain.model.User;
 import com.rhenan.taskflow.domain.valueObjects.Email;
 import com.rhenan.taskflow.domain.valueObjects.Name;
-import com.rhenan.taskflow.domain.valueObjects.UserId;
 import com.rhenan.taskflow.infra.persistence.jpa.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
