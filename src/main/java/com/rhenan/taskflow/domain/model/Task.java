@@ -16,8 +16,8 @@ public class Task {
 
     private final TaskId id;
     private  final UserId userId;
-    private final Title title;
-    private final Description description;
+    private Title title;
+    private Description description;
     private ActivityStatus status;
     private final Instant createdAt;
     private Instant completedAt;
@@ -72,6 +72,20 @@ public class Task {
 
     public void finish() {
         updateStatus(ActivityStatus.COMPLETED);
+    }
+    
+    public void updateTitle(Title newTitle) {
+        if (this.status == ActivityStatus.COMPLETED) {
+            throw new BusinessRuleException("Não é possível atualizar uma tarefa concluída");
+        }
+        this.title = Objects.requireNonNull(newTitle);
+    }
+    
+    public void updateDescription(Description newDescription) {
+        if (this.status == ActivityStatus.COMPLETED) {
+            throw new BusinessRuleException("Não é possível atualizar uma tarefa concluída");
+        }
+        this.description = newDescription;
     }
 
     public TaskId getId() {
