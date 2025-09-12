@@ -1,6 +1,7 @@
 package com.rhenan.taskflow.domain.model;
 
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
+import com.rhenan.taskflow.domain.exception.BusinessRuleException;
 import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
 import com.rhenan.taskflow.domain.valueObjects.Title;
@@ -48,19 +49,29 @@ public class Task {
         );
     }
 
-    public void addSubTask (Title title) {
-        if (status == ActivityStatus.COMPLETED) {
-            throw new IllegalStateException("Não é possivel adicionar uma subtask em uma task finalizada");
+    public void addSubTask(Title title, Description description) {
+        if (this.status == ActivityStatus.COMPLETED) {
+            throw new BusinessRuleException("Não é possível adicionar subtarefas a uma tarefa concluída");
         }
-        subTask.add(SubTask.newSubTask(this.id, title, description));
+        
+        var newSubTask = SubTask.newSubTask(this.id, title, description);
+        subTask.add(newSubTask);
+    }
+
+    public void updateStatus(ActivityStatus newStatus) {
+        if (!this.status.allowTransition(newStatus)) {
+            throw new BusinessRuleException("Transição inválida de " + this.status + " para " + newStatus);
+        }
+        
+        this.status = newStatus;
+        
+        if (newStatus == ActivityStatus.COMPLETED) {
+            this.completedAt = Instant.now();
+        }
     }
 
     public void finish() {
-        if (subTask.stream().anyMatch(sub -> sub.getStatus() != ActivityStatus.COMPLETED)) {
-            throw new IllegalStateException("Todas as subtasks precisam ser concluidas antes de encerrar a task");
-        }
-        this.status = ActivityStatus.COMPLETED;
-        this.completedAt = Instant.now();
+        updateStatus(ActivityStatus.COMPLETED);
     }
 
     public TaskId getId() {
