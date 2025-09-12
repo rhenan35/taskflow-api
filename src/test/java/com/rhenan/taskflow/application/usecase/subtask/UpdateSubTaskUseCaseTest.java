@@ -119,4 +119,45 @@ class UpdateSubTaskUseCaseTest {
         verify(subTaskRepository).findById(subTaskId);
         verify(subTaskRepository, never()).save(any(SubTask.class));
     }
+
+    @Test
+    void shouldKeepOriginalTitleWhenNewTitleIsNull() {
+        UpdateSubTaskRequest requestWithNullTitle = new UpdateSubTaskRequest(null, "New Description");
+        when(subTaskRepository.findById(subTaskId)).thenReturn(Optional.of(existingSubTask));
+        when(subTaskRepository.save(any(SubTask.class))).thenReturn(existingSubTask);
+
+        SubTaskResponse response = updateSubTaskUseCase.execute(subTaskUuid, requestWithNullTitle);
+
+        assertNotNull(response);
+        verify(subTaskRepository).findById(subTaskId);
+        verify(subTaskRepository).save(any(SubTask.class));
+    }
+
+    @Test
+    void shouldKeepOriginalDescriptionWhenNewDescriptionIsNull() {
+        UpdateSubTaskRequest requestWithNullDescription = new UpdateSubTaskRequest("New Title", null);
+        when(subTaskRepository.findById(subTaskId)).thenReturn(Optional.of(existingSubTask));
+        when(subTaskRepository.save(any(SubTask.class))).thenReturn(existingSubTask);
+
+        SubTaskResponse response = updateSubTaskUseCase.execute(subTaskUuid, requestWithNullDescription);
+
+        assertNotNull(response);
+        verify(subTaskRepository).findById(subTaskId);
+        verify(subTaskRepository).save(any(SubTask.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTitleIsEmpty() {
+        UpdateSubTaskRequest requestWithEmptyTitle = new UpdateSubTaskRequest("", "Valid Description");
+        when(subTaskRepository.findById(subTaskId)).thenReturn(Optional.of(existingSubTask));
+
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> updateSubTaskUseCase.execute(subTaskUuid, requestWithEmptyTitle)
+        );
+
+        assertEquals("Title não pode ser vazio!", exception.getMessage());
+        verify(subTaskRepository).findById(subTaskId);
+        verify(subTaskRepository, never()).save(any(SubTask.class));
+    }
 }

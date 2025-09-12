@@ -83,4 +83,40 @@ class FindSubTaskUseCaseTest {
 
         verify(subTaskRepository).findById(subTaskId);
     }
+
+    @Test
+    void shouldFindSubTaskWithDifferentStatus() {
+        subTask.finish();
+        when(subTaskRepository.findById(subTaskId)).thenReturn(Optional.of(subTask));
+
+        SubTaskResponse response = findSubTaskUseCase.execute(subTaskUuid);
+
+        assertNotNull(response);
+        assertEquals("COMPLETED", response.status().toString());
+        verify(subTaskRepository).findById(subTaskId);
+    }
+
+    @Test
+    void shouldHandleNullUuidGracefully() {
+        assertThrows(
+            NullPointerException.class,
+            () -> findSubTaskUseCase.execute(null)
+        );
+    }
+
+    @Test
+    void shouldFindSubTaskWithEmptyDescription() {
+        SubTask subTaskWithEmptyDesc = SubTask.newSubTask(
+            taskId,
+            "Test Title",
+            ""
+        );
+        when(subTaskRepository.findById(subTaskId)).thenReturn(Optional.of(subTaskWithEmptyDesc));
+
+        SubTaskResponse response = findSubTaskUseCase.execute(subTaskUuid);
+
+        assertNotNull(response);
+        assertEquals("", response.description());
+        verify(subTaskRepository).findById(subTaskId);
+    }
 }
