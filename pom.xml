@@ -142,10 +142,8 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>**/domain/event/**</exclude>
                                 <exclude>**/domain/exception/**</exclude>
                                 <exclude>**/*Config.class</exclude>
-                                <exclude>**/application/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>
