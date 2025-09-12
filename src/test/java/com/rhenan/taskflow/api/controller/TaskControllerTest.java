@@ -3,14 +3,18 @@ package com.rhenan.taskflow.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rhenan.taskflow.application.dto.request.CreateSubTaskRequest;
 import com.rhenan.taskflow.application.dto.request.CreateTaskRequest;
+import com.rhenan.taskflow.application.dto.request.PageRequest;
+import com.rhenan.taskflow.application.dto.request.TaskFilterRequest;
 import com.rhenan.taskflow.application.dto.request.UpdateStatusRequest;
+import com.rhenan.taskflow.application.dto.response.PageResponse;
 import com.rhenan.taskflow.application.dto.response.SubTaskResponse;
 import com.rhenan.taskflow.application.dto.response.TaskResponse;
-import com.rhenan.taskflow.application.usecase.subtask.CreateSubTaskUseCase;
-import com.rhenan.taskflow.application.usecase.subtask.FindSubTasksByTaskIdUseCase;
 import com.rhenan.taskflow.application.usecase.task.CreateTaskUseCase;
 import com.rhenan.taskflow.application.usecase.task.FindTasksByStatusUseCase;
+import com.rhenan.taskflow.application.usecase.task.FindTasksWithFiltersUseCase;
 import com.rhenan.taskflow.application.usecase.task.UpdateTaskStatusUseCase;
+import com.rhenan.taskflow.application.usecase.subtask.CreateSubTaskUseCase;
+import com.rhenan.taskflow.application.usecase.subtask.FindSubTasksByTaskIdUseCase;
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,9 @@ class TaskControllerTest {
 
     @MockitoBean
     private FindTasksByStatusUseCase findTasksByStatusUseCase;
+
+    @MockitoBean
+    private FindTasksWithFiltersUseCase findTasksWithFiltersUseCase;
 
     @MockitoBean
     private UpdateTaskStatusUseCase updateTaskStatusUseCase;
@@ -199,6 +206,108 @@ class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("COMPLETED"))
                 .andExpect(jsonPath("$.completedAt").exists());
+    }
+
+    @Test
+    void deveBuscarTarefasComFiltrosEPaginacao() throws Exception {
+        UUID userId = UUID.randomUUID();
+        TaskResponse taskResponse = new TaskResponse(
+                UUID.randomUUID(),
+                userId,
+                "Tarefa Filtrada",
+                "Descrição",
+                ActivityStatus.PENDING,
+                Instant.now(),
+                null,
+                List.of()
+        );
+
+        PageResponse<TaskResponse> pageResponse = PageResponse.of(
+                List.of(taskResponse),
+                0,
+                10,
+                1L
+        );
+
+        when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
+                .thenReturn(pageResponse);
+
+        mockMvc.perform(get("/tarefas/search")
+                        .param("status", "PENDING")
+                        .param("userId", userId.toString())
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sortBy", "createdAt")
+                        .param("sortDirection", "desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Tarefa Filtrada"))
+                .andExpect(jsonPath("$.content[0].status").value("PENDING"))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.totalElements").value(1));
+    }
+
+    @Test
+    void deveBuscarTarefasSemFiltros() throws Exception {
+        TaskResponse taskResponse = new TaskResponse(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Tarefa Sem Filtro",
+                "Descrição",
+                ActivityStatus.IN_PROGRESS,
+                Instant.now(),
+                null,
+                List.of()
+        );
+
+        PageResponse<TaskResponse> pageResponse = PageResponse.of(
+                List.of(taskResponse),
+                0,
+                10,
+                1L
+        );
+
+        when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
+                .thenReturn(pageResponse);
+
+        mockMvc.perform(get("/tarefas/search")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Tarefa Sem Filtro"))
+                .andExpect(jsonPath("$.totalElements").value(1));
+    }
+
+    @Test
+    void deveBuscarTarefasComFiltroDeData() throws Exception {
+        TaskResponse taskResponse = new TaskResponse(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Tarefa Recente",
+                "Descrição",
+                ActivityStatus.COMPLETED,
+                Instant.now(),
+                Instant.now(),
+                List.of()
+        );
+
+        PageResponse<TaskResponse> pageResponse = PageResponse.of(
+                List.of(taskResponse),
+                0,
+                5,
+                1L
+        );
+
+        when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
+                .thenReturn(pageResponse);
+
+        mockMvc.perform(get("/tarefas/search")
+                        .param("createdAfter", "2024-01-01T00:00:00")
+                        .param("createdBefore", "2024-12-31T23:59:59")
+                        .param("size", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Tarefa Recente"))
+                .andExpect(jsonPath("$.size").value(5));
     }
 
     @Test

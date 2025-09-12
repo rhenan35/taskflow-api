@@ -2,12 +2,16 @@ package com.rhenan.taskflow.api.controller;
 
 import com.rhenan.taskflow.application.dto.request.CreateSubTaskRequest;
 import com.rhenan.taskflow.application.dto.request.CreateTaskRequest;
+import com.rhenan.taskflow.application.dto.request.PageRequest;
+import com.rhenan.taskflow.application.dto.request.TaskFilterRequest;
 import com.rhenan.taskflow.application.dto.request.UpdateStatusRequest;
+import com.rhenan.taskflow.application.dto.response.PageResponse;
 import com.rhenan.taskflow.application.dto.response.SubTaskResponse;
 import com.rhenan.taskflow.application.dto.response.TaskResponse;
 
 import com.rhenan.taskflow.application.usecase.task.CreateTaskUseCase;
 import com.rhenan.taskflow.application.usecase.task.FindTasksByStatusUseCase;
+import com.rhenan.taskflow.application.usecase.task.FindTasksWithFiltersUseCase;
 import com.rhenan.taskflow.application.usecase.task.UpdateTaskStatusUseCase;
 import com.rhenan.taskflow.application.usecase.subtask.CreateSubTaskUseCase;
 import com.rhenan.taskflow.application.usecase.subtask.FindSubTasksByTaskIdUseCase;
@@ -36,8 +40,8 @@ public class TaskController {
     private final CreateTaskUseCase createTaskUseCase;
     private final CreateSubTaskUseCase createSubTaskUseCase;
     private final FindTasksByStatusUseCase findTasksByStatusUseCase;
+    private final FindTasksWithFiltersUseCase findTasksWithFiltersUseCase;
     private final UpdateTaskStatusUseCase updateTaskStatusUseCase;
-
     private final FindSubTasksByTaskIdUseCase findSubTasksByTaskIdUseCase;
 
     @GetMapping
@@ -48,6 +52,38 @@ public class TaskController {
     })
     public ResponseEntity<List<TaskResponse>> getTasksByStatus(@RequestParam ActivityStatus status) {
         List<TaskResponse> response = findTasksByStatusUseCase.execute(status);
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/search")
+    @Operation(summary = "Buscar tarefas com filtros e paginação", description = "Busca tarefas com filtros combinados e paginação")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tarefas encontradas"),
+        @ApiResponse(responseCode = "400", description = "Parâmetros inválidos"),
+        @ApiResponse(responseCode = "401", description = "Não autorizado")
+    })
+    public ResponseEntity<PageResponse<TaskResponse>> searchTasks(
+            @RequestParam(required = false) ActivityStatus status,
+            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String createdAfter,
+            @RequestParam(required = false) String createdBefore,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection) {
+        
+        TaskFilterRequest filters = TaskFilterRequest.builder()
+            .status(status)
+            .userId(userId)
+            .title(title)
+            .createdAfter(createdAfter != null ? java.time.LocalDateTime.parse(createdAfter) : null)
+            .createdBefore(createdBefore != null ? java.time.LocalDateTime.parse(createdBefore) : null)
+            .build();
+        
+        PageRequest pageRequest = PageRequest.of(page, size, sortBy, sortDirection);
+        
+        PageResponse<TaskResponse> response = findTasksWithFiltersUseCase.execute(filters, pageRequest);
         return ResponseEntity.ok(response);
     }
 
