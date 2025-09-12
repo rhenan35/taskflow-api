@@ -232,7 +232,7 @@ class TaskControllerTest {
         when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
                 .thenReturn(pageResponse);
 
-        mockMvc.perform(get("/tarefas/search")
+        mockMvc.perform(get("/tarefas/busca")
                         .param("status", "PENDING")
                         .param("userId", userId.toString())
                         .param("page", "0")
@@ -270,7 +270,7 @@ class TaskControllerTest {
         when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
                 .thenReturn(pageResponse);
 
-        mockMvc.perform(get("/tarefas/search")
+        mockMvc.perform(get("/tarefas/busca")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -301,7 +301,7 @@ class TaskControllerTest {
         when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
                 .thenReturn(pageResponse);
 
-        mockMvc.perform(get("/tarefas/search")
+        mockMvc.perform(get("/tarefas/busca")
                         .param("createdAfter", "2024-01-01T00:00:00")
                         .param("createdBefore", "2024-12-31T23:59:59")
                         .param("size", "5"))
