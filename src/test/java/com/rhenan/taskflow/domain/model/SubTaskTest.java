@@ -1,6 +1,7 @@
 package com.rhenan.taskflow.domain.model;
 
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
+import com.rhenan.taskflow.domain.exception.BusinessRuleException;
 import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.SubTaskId;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
@@ -38,14 +39,14 @@ public class SubTaskTest {
     void naoPermiteTransicaoInvalida() {
         SubTask st = SubTask.newSubTask(TaskId.newTask(), new Title("T1"), null);
         st.updateStatus(ActivityStatus.IN_PROGRESS);
-        assertThrows(IllegalStateException.class, () -> st.updateStatus(ActivityStatus.PENDING));
+        assertThrows(BusinessRuleException.class, () -> st.updateStatus(ActivityStatus.PENDING));
     }
 
     @Test
     void naoPermiteAlterarDepoisDeConcluida() {
         SubTask st = SubTask.newSubTask(TaskId.newTask(), new Title("T1"), null);
         st.updateStatus(ActivityStatus.COMPLETED);
-        assertThrows(IllegalStateException.class, () -> st.updateStatus(ActivityStatus.IN_PROGRESS));
+        assertThrows(BusinessRuleException.class, () -> st.updateStatus(ActivityStatus.IN_PROGRESS));
     }
 
     @Test

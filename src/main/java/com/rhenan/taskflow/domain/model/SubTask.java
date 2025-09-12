@@ -1,6 +1,7 @@
 package com.rhenan.taskflow.domain.model;
 
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
+import com.rhenan.taskflow.domain.exception.BusinessRuleException;
 import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.SubTaskId;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
@@ -45,13 +46,22 @@ public class SubTask {
     }
 
     public void updateStatus(ActivityStatus newStatus) {
-        if (!status.allowTransition(newStatus)) {
-            throw new IllegalStateException("O stats " + status + " não pode ser alterado para " + newStatus);
+        Objects.requireNonNull(newStatus, "Status não pode ser nulo");
+        
+        if (!this.status.allowTransition(newStatus)) {
+            throw new BusinessRuleException(
+                String.format("Transição inválida de %s para %s", this.status, newStatus)
+            );
         }
+        
         this.status = newStatus;
         if (newStatus == ActivityStatus.COMPLETED) {
             this.completedAt = Instant.now();
         }
+    }
+
+    public void finish() {
+        updateStatus(ActivityStatus.COMPLETED);
     }
 
     public SubTaskId getId() {
