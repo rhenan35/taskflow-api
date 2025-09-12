@@ -17,9 +17,9 @@ public class TaskMapper {
     }
     
     public static TaskResponse toResponse(Task task, List<SubTask> subTasks) {
-        List<SubTaskResponse> subTaskResponses = subTasks.stream()
-            .map(SubTaskMapper::toResponse)
-            .toList();
+        List<SubTaskResponse> subTaskResponses = subTasks != null ? 
+            subTasks.stream().map(SubTaskMapper::toResponse).toList() : 
+            List.of();
             
         return new TaskResponse(
             task.getId().value(),

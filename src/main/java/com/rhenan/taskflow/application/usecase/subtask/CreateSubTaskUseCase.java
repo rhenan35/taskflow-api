@@ -6,7 +6,6 @@ import com.rhenan.taskflow.application.mapper.SubTaskMapper;
 import com.rhenan.taskflow.domain.exception.NotFoundException;
 import com.rhenan.taskflow.domain.model.SubTask;
 import com.rhenan.taskflow.domain.model.Task;
-import com.rhenan.taskflow.domain.repository.SubTaskRepository;
 import com.rhenan.taskflow.domain.repository.TaskRepository;
 import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CreateSubTaskUseCase {
     
-    private final SubTaskRepository subTaskRepository;
     private final TaskRepository taskRepository;
     
     @Transactional
@@ -33,11 +31,10 @@ public class CreateSubTaskUseCase {
         Description description = request.description() != null ? new Description(request.description()) : null;
         
         task.addSubTask(title, description);
-        taskRepository.save(task);
+        Task savedTask = taskRepository.save(task);
         
-        SubTask subTask = SubTask.newSubTask(taskId, title, description);
-        SubTask savedSubTask = subTaskRepository.save(subTask);
+        SubTask createdSubTask = savedTask.getSubTask().get(savedTask.getSubTask().size() - 1);
         
-        return SubTaskMapper.toResponse(savedSubTask);
+        return SubTaskMapper.toResponse(createdSubTask);
     }
 }
