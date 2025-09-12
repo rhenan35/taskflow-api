@@ -46,8 +46,12 @@ public class SubTask {
     }
 
     public void updateStatus(ActivityStatus newStatus) {
-        if (newStatus == ActivityStatus.COMPLETED && this.status == ActivityStatus.COMPLETED) {
-            throw new BusinessRuleException("SubTask já está concluída");
+        Objects.requireNonNull(newStatus, "Status não pode ser nulo");
+        
+        if (!this.status.allowTransition(newStatus)) {
+            throw new BusinessRuleException(
+                String.format("Transição inválida de %s para %s", this.status, newStatus)
+            );
         }
         
         this.status = newStatus;
