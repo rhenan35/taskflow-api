@@ -55,7 +55,7 @@ public class TaskController {
         return ResponseEntity.ok(response);
     }
     
-    @GetMapping("/search")
+    @GetMapping("/busca")
     @Operation(summary = "Buscar tarefas com filtros e paginação", description = "Busca tarefas com filtros combinados e paginação")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Tarefas encontradas"),
