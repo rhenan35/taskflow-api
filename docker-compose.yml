@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskflow-postgres
+    environment:
+      POSTGRES_DB: taskflow
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: taskflow123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - taskflow-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow -d taskflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.51
+    container_name: taskflow-jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+      COLLECTOR_ZIPKIN_HOST_PORT: ":9411"
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "14250:14250"   # gRPC
+      - "9411:9411"     # Zipkin HTTP
+    networks:
+      - taskflow-network
+    restart: unless-stopped
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.89.0
+    container_name: taskflow-otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"     # OTLP gRPC receiver
+      - "4318:4318"     # OTLP HTTP receiver
+      - "8889:8889"     # Prometheus metrics
+    depends_on:
+      - jaeger
+    networks:
+      - taskflow-network
+    restart: unless-stopped
+
+  taskflow-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskflow-api
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: taskflow
+      DB_USERNAME: taskflow
+      DB_PASSWORD: taskflow123
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_SERVICE_NAME: taskflow-api
+      OTEL_RESOURCE_ATTRIBUTES: service.name=taskflow-api,service.version=1.0.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    networks:
+      - taskflow-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  taskflow-network:
+    driver: bridge

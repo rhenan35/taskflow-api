@@ -1,9 +1,10 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/taskflow
-    username: taskflow
-    password: taskflow
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:taskflow}
+    username: ${DB_USERNAME:taskflow}
+    password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
+  
   jpa:
     hibernate:
       ddl-auto: validate
@@ -17,14 +18,8 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
-springdoc:
-  swagger-ui:
-    enabled: true
-  api-docs:
-    enabled: true
-
 logging:
   level:
     '[com.rhenan.taskflow]': INFO
-    '[org.springframework.web]': INFO
+    '[org.springframework.web]': WARN
     '[org.hibernate]': WARN

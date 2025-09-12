@@ -1,0 +1,61 @@
+# Build artifacts
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+*.dockerfile
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Logs
+logs/
+*.log
+
+# Test reports
+test-results/
+coverage/
+
+# Maven wrapper (keep mvnw files)
+# .mvn/
+# mvnw
+# mvnw.cmd
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Node modules (if any)
+node_modules/
+
+# Quality tools
+qodana.yaml
+.qodana/
