@@ -7,7 +7,6 @@ import com.rhenan.taskflow.application.dto.response.SubTaskResponse;
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
 import com.rhenan.taskflow.domain.model.SubTask;
 import com.rhenan.taskflow.domain.repository.SubTaskRepository;
-import com.rhenan.taskflow.domain.valueObjects.SubTaskId;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +38,6 @@ class FindSubTasksWithFiltersUseCaseTest {
     @BeforeEach
     void setUp() {
         UUID taskUuid = UUID.randomUUID();
-        UUID subTaskUuid = UUID.randomUUID();
         
         filters = SubTaskFilterRequest.builder()
             .status(ActivityStatus.PENDING)

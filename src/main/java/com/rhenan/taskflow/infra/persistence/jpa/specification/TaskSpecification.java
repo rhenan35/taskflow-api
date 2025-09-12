@@ -5,7 +5,6 @@ import com.rhenan.taskflow.infra.persistence.jpa.entity.TaskEntity;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
