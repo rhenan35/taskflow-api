@@ -59,6 +59,13 @@ public class SubTask {
         );
     }
 
+    public static SubTask fromExisting(SubTaskId id, TaskId taskId, String title, String description, 
+                                       ActivityStatus status, Instant createdAt, Instant completedAt) {
+        SubTask subTask = new SubTask(id, taskId, title, description, status, createdAt);
+        subTask.completedAt = completedAt;
+        return subTask;
+    }
+
     public void updateStatus(ActivityStatus newStatus) {
         Objects.requireNonNull(newStatus, "Status não pode ser nulo");
         

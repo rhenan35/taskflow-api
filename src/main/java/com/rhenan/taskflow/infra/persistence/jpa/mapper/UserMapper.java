@@ -2,6 +2,7 @@ package com.rhenan.taskflow.infra.persistence.jpa.mapper;
 
 import com.rhenan.taskflow.domain.model.User;
 import com.rhenan.taskflow.domain.valueObjects.Email;
+import com.rhenan.taskflow.domain.valueObjects.UserId;
 
 import com.rhenan.taskflow.infra.persistence.jpa.entity.UserEntity;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,8 @@ public class UserMapper {
             return null;
         }
         
-        return User.newUser(
+        return User.fromExisting(
+            new UserId(entity.getId()),
             entity.getName(),
             new Email(entity.getEmail())
         );

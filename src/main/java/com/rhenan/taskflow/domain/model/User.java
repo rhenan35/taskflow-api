@@ -32,6 +32,10 @@ public class User {
     public static User newUser(String name, Email email) {
         return new User(UserId.newUser(), name, email);
     }
+    
+    public static User fromExisting(UserId id, String name, Email email) {
+        return new User(id, name, email);
+    }
 
     public UserId getId() {
         return id;

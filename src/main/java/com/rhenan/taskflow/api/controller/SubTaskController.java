@@ -24,14 +24,6 @@ import java.util.UUID;
 public class SubTaskController {
 
     private final UpdateSubTaskStatusUseCase updateSubTaskStatusUseCase;
-
-
-
-
-
-
-
-
     @PatchMapping("/{id}/status")
     @Operation(summary = "Atualizar status da subtarefa", description = "Atualiza o status de uma subtarefa")
     @ApiResponses(value = {
@@ -45,8 +37,4 @@ public class SubTaskController {
         SubTaskResponse response = updateSubTaskStatusUseCase.execute(id, request.status());
         return ResponseEntity.ok(response);
     }
-
-
-
-
 }

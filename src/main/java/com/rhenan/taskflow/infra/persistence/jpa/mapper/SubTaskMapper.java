@@ -1,6 +1,7 @@
 package com.rhenan.taskflow.infra.persistence.jpa.mapper;
 
 import com.rhenan.taskflow.domain.model.SubTask;
+import com.rhenan.taskflow.domain.valueObjects.SubTaskId;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
 import com.rhenan.taskflow.infra.persistence.jpa.entity.SubTaskEntity;
 import org.springframework.stereotype.Component;
@@ -29,10 +30,14 @@ public class SubTaskMapper {
             return null;
         }
         
-        return SubTask.newSubTask(
+        return SubTask.fromExisting(
+            new SubTaskId(entity.getId()),
             new TaskId(entity.getTaskId()),
             entity.getTitle(),
-            entity.getDescription()
+            entity.getDescription(),
+            entity.getStatus(),
+            entity.getCreatedAt(),
+            entity.getCompletedAt()
         );
     }
 }

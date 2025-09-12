@@ -64,8 +64,6 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
-
     @PostMapping("/{tarefaId}/subtarefas")
     @Operation(summary = "Criar subtarefa", description = "Cria uma nova subtarefa para uma tarefa específica")
     @ApiResponses(value = {
@@ -90,9 +88,7 @@ public class TaskController {
         List<SubTaskResponse> response = findSubTasksByTaskIdUseCase.execute(tarefaId);
         return ResponseEntity.ok(response);
     }
-
-
-
+    
     @PatchMapping("/{id}/status")
     @Operation(summary = "Atualizar status da tarefa", description = "Atualiza o status de uma tarefa")
     @ApiResponses(value = {
@@ -106,8 +102,4 @@ public class TaskController {
         TaskResponse response = updateTaskStatusUseCase.execute(id, request.status());
         return ResponseEntity.ok(response);
     }
-
-
-
-
 }

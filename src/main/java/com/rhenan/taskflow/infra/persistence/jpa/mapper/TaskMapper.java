@@ -1,7 +1,7 @@
 package com.rhenan.taskflow.infra.persistence.jpa.mapper;
 
 import com.rhenan.taskflow.domain.model.Task;
-
+import com.rhenan.taskflow.domain.valueObjects.TaskId;
 import com.rhenan.taskflow.domain.valueObjects.UserId;
 import com.rhenan.taskflow.infra.persistence.jpa.entity.TaskEntity;
 import org.springframework.stereotype.Component;
@@ -30,10 +30,14 @@ public class TaskMapper {
             return null;
         }
         
-        return Task.createTask(
+        return Task.fromExisting(
+            new TaskId(entity.getId()),
             new UserId(entity.getUserId()),
             entity.getTitle(),
-            entity.getDescription()
+            entity.getDescription(),
+            entity.getStatus(),
+            entity.getCreatedAt(),
+            entity.getCompletedAt()
         );
     }
 }

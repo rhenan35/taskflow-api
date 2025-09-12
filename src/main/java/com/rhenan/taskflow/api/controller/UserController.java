@@ -50,8 +50,4 @@ public class UserController {
         UserResponse response = findUserByIdUseCase.execute(id);
         return ResponseEntity.ok(response);
     }
-
-
-
-
 }

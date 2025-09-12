@@ -63,6 +63,12 @@ public class Task {
         );
     }
 
+    public static Task fromExisting(TaskId id, UserId userId, String title, String description, ActivityStatus status, Instant createdAt, Instant completedAt) {
+        Task task = new Task(id, userId, title, description, status, createdAt);
+        task.completedAt = completedAt;
+        return task;
+    }
+
     public void addSubTask(String title, String description) {
         if (this.status == ActivityStatus.COMPLETED) {
             throw new BusinessRuleException("Não é possível adicionar subtarefas a uma tarefa concluída");
