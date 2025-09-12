@@ -3,14 +3,13 @@ package com.rhenan.taskflow.api.config;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import com.rhenan.taskflow.application.usecase.user.CreateUserUseCase;
 import com.rhenan.taskflow.application.usecase.user.FindUserByIdUseCase;
 import com.rhenan.taskflow.api.controller.UserController;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
@@ -19,10 +18,10 @@ class SecurityConfigTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private CreateUserUseCase createUserUseCase;
 
-    @MockBean
+    @MockitoBean
     private FindUserByIdUseCase findUserByIdUseCase;
 
     @Test

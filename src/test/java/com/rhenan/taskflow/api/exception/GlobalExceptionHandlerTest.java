@@ -11,7 +11,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.Instant;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -27,6 +26,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveRetornarNotFoundParaNotFoundException() {
         String mensagem = "Recurso não encontrado";
         NotFoundException exception = new NotFoundException(mensagem);
@@ -35,14 +35,16 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(404, response.getBody().getStatus());
-        assertEquals("Not Found", response.getBody().getError());
-        assertEquals(mensagem, response.getBody().getMessage());
-        assertNotNull(response.getBody().getTimestamp());
-        assertTrue(response.getBody().getTimestamp().isBefore(Instant.now().plusSeconds(1)));
+        ErrorResponse body = response.getBody();
+        assertEquals(404, body.getStatus());
+        assertEquals("Not Found", body.getError());
+        assertEquals(mensagem, body.getMessage());
+        assertNotNull(body.getTimestamp());
+        assertTrue(body.getTimestamp().isBefore(Instant.now().plusSeconds(1)));
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveRetornarBadRequestParaValidationException() {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "test");
         bindingResult.addError(new FieldError("test", "name", "Nome é obrigatório"));
@@ -54,16 +56,18 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(400, response.getBody().getStatus());
-        assertEquals("Validation Failed", response.getBody().getError());
-        assertEquals("Dados inválidos", response.getBody().getMessage());
-        assertNotNull(response.getBody().getValidationErrors());
-        assertEquals(2, response.getBody().getValidationErrors().size());
-        assertEquals("Nome é obrigatório", response.getBody().getValidationErrors().get("name"));
-        assertEquals("Email inválido", response.getBody().getValidationErrors().get("email"));
+        ErrorResponse body = response.getBody();
+        assertEquals(400, body.getStatus());
+        assertEquals("Validation Failed", body.getError());
+        assertEquals("Dados inválidos", body.getMessage());
+        assertNotNull(body.getValidationErrors());
+        assertEquals(2, body.getValidationErrors().size());
+        assertEquals("Nome é obrigatório", body.getValidationErrors().get("name"));
+        assertEquals("Email inválido", body.getValidationErrors().get("email"));
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveRetornarBadRequestParaIllegalArgumentException() {
         String mensagem = "Argumento inválido";
         IllegalArgumentException exception = new IllegalArgumentException(mensagem);
@@ -72,13 +76,15 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(400, response.getBody().getStatus());
-        assertEquals("Bad Request", response.getBody().getError());
-        assertEquals(mensagem, response.getBody().getMessage());
-        assertNotNull(response.getBody().getTimestamp());
+        ErrorResponse body = response.getBody();
+        assertEquals(400, body.getStatus());
+        assertEquals("Bad Request", body.getError());
+        assertEquals(mensagem, body.getMessage());
+        assertNotNull(body.getTimestamp());
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveRetornarBadRequestParaHttpMessageNotReadableException() {
         HttpMessageNotReadableException exception = mock(HttpMessageNotReadableException.class);
         when(exception.getMessage()).thenReturn("JSON parse error");
@@ -87,13 +93,15 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(400, response.getBody().getStatus());
-        assertEquals("Bad Request", response.getBody().getError());
-        assertEquals("Formato JSON inválido. Verifique se não há caracteres especiais não escapados no conteúdo.", response.getBody().getMessage());
-        assertNotNull(response.getBody().getTimestamp());
+        ErrorResponse body = response.getBody();
+        assertEquals(400, body.getStatus());
+        assertEquals("Bad Request", body.getError());
+        assertEquals("Formato JSON inválido. Verifique se não há caracteres especiais não escapados no conteúdo.", body.getMessage());
+        assertNotNull(body.getTimestamp());
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveRetornarInternalServerErrorParaExcecaoGenerica() {
         RuntimeException exception = new RuntimeException("Erro inesperado");
 
@@ -101,13 +109,15 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(500, response.getBody().getStatus());
-        assertEquals("Internal Server Error", response.getBody().getError());
-        assertEquals("Erro interno do servidor", response.getBody().getMessage());
-        assertNotNull(response.getBody().getTimestamp());
+        ErrorResponse body = response.getBody();
+        assertEquals(500, body.getStatus());
+        assertEquals("Internal Server Error", body.getError());
+        assertEquals("Erro interno do servidor", body.getMessage());
+        assertNotNull(body.getTimestamp());
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveManterConsistenciaNoTimestamp() {
         NotFoundException exception = new NotFoundException("Teste");
         Instant antes = Instant.now();
@@ -115,39 +125,50 @@ class GlobalExceptionHandlerTest {
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleNotFoundException(exception);
         
         Instant depois = Instant.now();
-        assertNotNull(response.getBody().getTimestamp());
-        assertTrue(response.getBody().getTimestamp().isAfter(antes.minusSeconds(1)));
-        assertTrue(response.getBody().getTimestamp().isBefore(depois.plusSeconds(1)));
+        assertNotNull(response.getBody());
+        ErrorResponse body = response.getBody();
+        assertNotNull(body.getTimestamp());
+        assertTrue(body.getTimestamp().isAfter(antes.minusSeconds(1)));
+        assertTrue(body.getTimestamp().isBefore(depois.plusSeconds(1)));
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveRetornarValidationErrorsVazioQuandoNaoHouverErros() {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "test");
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(null, bindingResult);
 
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleValidationException(exception);
 
-        assertNotNull(response.getBody().getValidationErrors());
-        assertTrue(response.getBody().getValidationErrors().isEmpty());
+        assertNotNull(response.getBody());
+        ErrorResponse body = response.getBody();
+        assertNotNull(body.getValidationErrors());
+        assertTrue(body.getValidationErrors().isEmpty());
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveManterMensagemOriginalDaNotFoundException() {
         String mensagemEspecifica = "Usuário com ID 123 não foi encontrado";
         NotFoundException exception = new NotFoundException(mensagemEspecifica);
 
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleNotFoundException(exception);
 
-        assertEquals(mensagemEspecifica, response.getBody().getMessage());
+        assertNotNull(response.getBody());
+        ErrorResponse body = response.getBody();
+        assertEquals(mensagemEspecifica, body.getMessage());
     }
 
     @Test
+    @SuppressWarnings("null")
     void deveManterMensagemOriginalDaIllegalArgumentException() {
         String mensagemEspecifica = "Status inválido: UNKNOWN";
         IllegalArgumentException exception = new IllegalArgumentException(mensagemEspecifica);
 
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleIllegalArgumentException(exception);
 
-        assertEquals(mensagemEspecifica, response.getBody().getMessage());
+        assertNotNull(response.getBody());
+        ErrorResponse body = response.getBody();
+        assertEquals(mensagemEspecifica, body.getMessage());
     }
 }
