@@ -6,7 +6,8 @@ import com.rhenan.taskflow.domain.exception.BusinessRuleException;
 import com.rhenan.taskflow.domain.exception.NotFoundException;
 import com.rhenan.taskflow.domain.model.Task;
 import com.rhenan.taskflow.domain.repository.TaskRepository;
-import com.rhenan.taskflow.domain.valueObjects.*;
+import com.rhenan.taskflow.domain.valueObjects.TaskId;
+import com.rhenan.taskflow.domain.valueObjects.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,8 +39,8 @@ class UpdateTaskUseCaseTest {
         taskId = TaskId.fromString("550e8400-e29b-41d4-a716-446655440000");
         existingTask = Task.createTask(
             UserId.fromString("550e8400-e29b-41d4-a716-446655440001"),
-            new Title("Original Title"),
-            new Description("Original Description")
+            "Original Title",
+            "Original Description"
         );
         updateRequest = new UpdateTaskRequest("Updated Title", "Updated Description");
     }

@@ -6,7 +6,7 @@ import com.rhenan.taskflow.domain.exception.NotFoundException;
 import com.rhenan.taskflow.domain.model.User;
 import com.rhenan.taskflow.domain.repository.UserRepository;
 import com.rhenan.taskflow.domain.valueObjects.Email;
-import com.rhenan.taskflow.domain.valueObjects.Name;
+
 import com.rhenan.taskflow.domain.valueObjects.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class UpdateUserUseCaseTest {
         userId = new UserId(userUuid);
         
         existingUser = User.newUser(
-            new Name("Original Name"),
+            "Original Name",
             new Email("original@example.com")
         );
         

@@ -5,7 +5,8 @@ import com.rhenan.taskflow.application.dto.response.TaskResponse;
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
 import com.rhenan.taskflow.domain.model.SubTask;
 import com.rhenan.taskflow.domain.model.Task;
-import com.rhenan.taskflow.domain.valueObjects.*;
+import com.rhenan.taskflow.domain.valueObjects.TaskId;
+import com.rhenan.taskflow.domain.valueObjects.UserId;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,8 +23,8 @@ class TaskMapperTest {
         
         assertNotNull(response);
         assertEquals(task.getId().value(), response.id());
-        assertEquals(task.getTitle().value(), response.title());
-        assertEquals(task.getDescription().value(), response.description());
+        assertEquals(task.getTitle(), response.title());
+        assertEquals(task.getDescription(), response.description());
         assertEquals(task.getStatus(), response.status());
         assertEquals(task.getCreatedAt(), response.createdAt());
         assertEquals(task.getCompletedAt(), response.completedAt());
@@ -74,22 +75,22 @@ class TaskMapperTest {
     private Task createSampleTask() {
         return Task.createTask(
             UserId.fromString("550e8400-e29b-41d4-a716-446655440000"),
-            new Title("Sample Task"),
-            new Description("Sample Description")
+            "Sample Task",
+            "Sample Description"
         );
     }
 
     private Task createSampleTaskWithSubTasks() {
         Task task = createSampleTask();
-        task.addSubTask(new Title("SubTask 1"), null);
-        task.addSubTask(new Title("SubTask 2"), new Description("SubTask 2 Description"));
+        task.addSubTask("SubTask 1", null);
+        task.addSubTask("SubTask 2", "SubTask 2 Description");
         return task;
     }
 
     private SubTask createSubTask(String title, ActivityStatus status) {
         SubTask subTask = SubTask.newSubTask(
             TaskId.fromString("550e8400-e29b-41d4-a716-446655440001"),
-            new Title(title),
+            title,
             null
         );
         if (status != ActivityStatus.PENDING) {

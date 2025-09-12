@@ -6,7 +6,8 @@ import com.rhenan.taskflow.domain.exception.BusinessRuleException;
 import com.rhenan.taskflow.domain.exception.NotFoundException;
 import com.rhenan.taskflow.domain.model.Task;
 import com.rhenan.taskflow.domain.repository.TaskRepository;
-import com.rhenan.taskflow.domain.valueObjects.*;
+import com.rhenan.taskflow.domain.valueObjects.TaskId;
+import com.rhenan.taskflow.domain.valueObjects.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,21 +41,21 @@ class CompleteTaskUseCaseTest {
         
         pendingTask = Task.createTask(
             UserId.fromString("550e8400-e29b-41d4-a716-446655440001"),
-            new Title("Pending Task"),
-            new Description("Pending Task Description")
+            "Pending Task",
+            "Pending Task Description"
         );
         
         inProgressTask = Task.createTask(
             UserId.fromString("550e8400-e29b-41d4-a716-446655440001"),
-            new Title("In Progress Task"),
-            new Description("In Progress Task Description")
+            "In Progress Task",
+            "In Progress Task Description"
         );
         inProgressTask.updateStatus(ActivityStatus.IN_PROGRESS);
         
         completedTask = Task.createTask(
             UserId.fromString("550e8400-e29b-41d4-a716-446655440001"),
-            new Title("Completed Task"),
-            new Description("Completed Task Description")
+            "Completed Task",
+            "Completed Task Description"
         );
         completedTask.finish();
     }
@@ -122,8 +123,8 @@ class CompleteTaskUseCaseTest {
 
         assertNotNull(response);
         assertEquals(pendingTask.getId().value(), response.id());
-        assertEquals(pendingTask.getTitle().value(), response.title());
-        assertEquals(pendingTask.getDescription().value(), response.description());
+        assertEquals(pendingTask.getTitle(), response.title());
+        assertEquals(pendingTask.getDescription(), response.description());
         assertEquals(pendingTask.getUserId().value(), response.userId());
         assertEquals(ActivityStatus.COMPLETED, response.status());
         assertNotNull(response.completedAt());

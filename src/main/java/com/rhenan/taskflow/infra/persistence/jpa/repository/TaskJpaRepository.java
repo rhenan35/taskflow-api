@@ -13,6 +13,8 @@ public interface TaskJpaRepository extends JpaRepository<TaskEntity, UUID> {
     
     List<TaskEntity> findByUserId(UUID userId);
     
+    List<TaskEntity> findByStatus(ActivityStatus status);
+    
     List<TaskEntity> findByUserIdAndStatus(UUID userId, ActivityStatus status);
     
     long countByUserIdAndStatus(UUID userId, ActivityStatus status);

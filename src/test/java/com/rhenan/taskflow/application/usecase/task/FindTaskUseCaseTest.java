@@ -53,7 +53,7 @@ class FindTaskUseCaseTest {
         
         when(task.getId()).thenReturn(new TaskId(taskId));
         when(task.getUserId()).thenReturn(mock(com.rhenan.taskflow.domain.valueObjects.UserId.class));
-        when(task.getTitle()).thenReturn(mock(com.rhenan.taskflow.domain.valueObjects.Title.class));
+
         when(task.getStatus()).thenReturn(com.rhenan.taskflow.domain.enums.ActivityStatus.PENDING);
         when(task.getCreatedAt()).thenReturn(java.time.Instant.now());
 
@@ -84,7 +84,7 @@ class FindTaskUseCaseTest {
         
         when(task.getId()).thenReturn(new TaskId(taskId));
         when(task.getUserId()).thenReturn(mock(com.rhenan.taskflow.domain.valueObjects.UserId.class));
-        when(task.getTitle()).thenReturn(mock(com.rhenan.taskflow.domain.valueObjects.Title.class));
+
         when(task.getStatus()).thenReturn(com.rhenan.taskflow.domain.enums.ActivityStatus.PENDING);
         when(task.getCreatedAt()).thenReturn(java.time.Instant.now());
 
@@ -101,7 +101,7 @@ class FindTaskUseCaseTest {
         
         when(task.getId()).thenReturn(new TaskId(taskId));
         when(task.getUserId()).thenReturn(mock(com.rhenan.taskflow.domain.valueObjects.UserId.class));
-        when(task.getTitle()).thenReturn(mock(com.rhenan.taskflow.domain.valueObjects.Title.class));
+
         when(task.getStatus()).thenReturn(com.rhenan.taskflow.domain.enums.ActivityStatus.PENDING);
         when(task.getCreatedAt()).thenReturn(java.time.Instant.now());
 

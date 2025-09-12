@@ -2,7 +2,7 @@ package com.rhenan.taskflow.infra.persistence.jpa.mapper;
 
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
 import com.rhenan.taskflow.domain.model.SubTask;
-import com.rhenan.taskflow.domain.valueObjects.*;
+import com.rhenan.taskflow.domain.valueObjects.TaskId;
 import com.rhenan.taskflow.infra.persistence.jpa.entity.SubTaskEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +26,8 @@ class SubTaskMapperTest {
         TaskId taskId = new TaskId(UUID.randomUUID());
         SubTask subTask = SubTask.newSubTask(
             taskId,
-            new Title("SubTarefa Teste"),
-            new Description("Descrição da subtarefa")
+            "SubTarefa Teste",
+            "Descrição da subtarefa"
         );
 
         SubTaskEntity entity = subTaskMapper.toEntity(subTask);
@@ -61,8 +61,8 @@ class SubTaskMapperTest {
         SubTask subTask = subTaskMapper.toDomain(entity);
 
         assertNotNull(subTask);
-        assertEquals("SubTask Entity", subTask.getTitle().value());
-        assertEquals("Descrição entity", subTask.getDescription().value());
+        assertEquals("SubTask Entity", subTask.getTitle());
+        assertEquals("Descrição entity", subTask.getDescription());
         assertEquals(entity.getTaskId(), subTask.getTaskId().value());
     }
 
@@ -78,7 +78,7 @@ class SubTaskMapperTest {
         TaskId taskId = new TaskId(UUID.randomUUID());
         SubTask subTask = SubTask.newSubTask(
             taskId,
-            new Title("Título sem descrição"),
+            "Título sem descrição",
             null
         );
 
@@ -86,7 +86,7 @@ class SubTaskMapperTest {
 
         assertNotNull(entity);
         assertEquals("Título sem descrição", entity.getTitle());
-        assertNull(entity.getDescription());
+        assertEquals("", entity.getDescription());
     }
 
     @Test
@@ -94,15 +94,15 @@ class SubTaskMapperTest {
         TaskId taskId = new TaskId(UUID.randomUUID());
         SubTask originalSubTask = SubTask.newSubTask(
             taskId,
-            new Title("Consistência SubTask"),
-            new Description("Teste de consistência")
+            "Consistência",
+            "Teste de consistência"
         );
 
         SubTaskEntity entity = subTaskMapper.toEntity(originalSubTask);
         SubTask convertedSubTask = subTaskMapper.toDomain(entity);
 
-        assertEquals(originalSubTask.getTitle().value(), convertedSubTask.getTitle().value());
-        assertEquals(originalSubTask.getDescription().value(), convertedSubTask.getDescription().value());
+        assertEquals(originalSubTask.getTitle(), convertedSubTask.getTitle());
+        assertEquals(originalSubTask.getDescription(), convertedSubTask.getDescription());
         assertEquals(originalSubTask.getTaskId().value(), convertedSubTask.getTaskId().value());
     }
 }

@@ -5,7 +5,8 @@ import com.rhenan.taskflow.application.dto.response.SubTaskResponse;
 import com.rhenan.taskflow.domain.exception.NotFoundException;
 import com.rhenan.taskflow.domain.model.Task;
 import com.rhenan.taskflow.domain.repository.TaskRepository;
-import com.rhenan.taskflow.domain.valueObjects.*;
+import com.rhenan.taskflow.domain.valueObjects.TaskId;
+import com.rhenan.taskflow.domain.valueObjects.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +40,8 @@ class CreateSubTaskUseCaseTest {
         
         existingTask = Task.createTask(
             userId,
-            new Title("Parent Task"),
-            new Description("Parent Task Description")
+            "Parent Task",
+            "Parent Task Description"
         );
         
         createRequest = new CreateSubTaskRequest(
@@ -82,7 +83,7 @@ class CreateSubTaskUseCaseTest {
 
         assertNotNull(response);
         assertEquals("SubTask Title Only", response.title());
-        assertNull(response.description());
+        assertEquals("", response.description());
         assertNotNull(response.id());
         assertEquals(existingTask.getId().value(), response.taskId());
         
@@ -104,7 +105,7 @@ class CreateSubTaskUseCaseTest {
 
     @Test
     void shouldAddSubTaskToExistingTask() {
-        existingTask.addSubTask(new Title("Existing SubTask"), null);
+        existingTask.addSubTask("Existing SubTask", null);
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(existingTask));
         when(taskRepository.save(any(Task.class))).thenReturn(existingTask);
 

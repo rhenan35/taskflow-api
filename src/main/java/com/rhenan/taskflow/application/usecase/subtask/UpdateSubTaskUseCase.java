@@ -6,9 +6,7 @@ import com.rhenan.taskflow.application.mapper.SubTaskMapper;
 import com.rhenan.taskflow.domain.exception.NotFoundException;
 import com.rhenan.taskflow.domain.model.SubTask;
 import com.rhenan.taskflow.domain.repository.SubTaskRepository;
-import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.SubTaskId;
-import com.rhenan.taskflow.domain.valueObjects.Title;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +24,8 @@ public class UpdateSubTaskUseCase {
         SubTask existingSubTask = subTaskRepository.findById(new SubTaskId(subTaskId))
             .orElseThrow(() -> new NotFoundException("Subtarefa não encontrada"));
         
-        Title newTitle = request.title() != null ? new Title(request.title()) : existingSubTask.getTitle();
-        Description newDescription = request.description() != null ? new Description(request.description()) : existingSubTask.getDescription();
+        String newTitle = request.title() != null ? request.title() : existingSubTask.getTitle();
+        String newDescription = request.description() != null ? request.description() : existingSubTask.getDescription();
         
         SubTask updatedSubTask = SubTask.newSubTask(
             existingSubTask.getTaskId(),

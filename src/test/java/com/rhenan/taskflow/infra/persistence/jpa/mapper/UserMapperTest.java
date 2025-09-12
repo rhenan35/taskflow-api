@@ -2,7 +2,7 @@ package com.rhenan.taskflow.infra.persistence.jpa.mapper;
 
 import com.rhenan.taskflow.domain.model.User;
 import com.rhenan.taskflow.domain.valueObjects.Email;
-import com.rhenan.taskflow.domain.valueObjects.Name;
+
 import com.rhenan.taskflow.infra.persistence.jpa.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,9 +22,8 @@ class UserMapperTest {
 
     @Test
     void deveConverterUserParaEntity() {
-        Name name = new Name("João Silva");
         Email email = Email.de("joao@email.com");
-        User user = User.newUser(name, email);
+        User user = User.newUser("João Silva", email);
 
         UserEntity entity = userMapper.toEntity(user);
 
@@ -51,7 +50,7 @@ class UserMapperTest {
         User user = userMapper.toDomain(entity);
 
         assertNotNull(user);
-        assertEquals("Maria Santos", user.getName().value());
+        assertEquals("Maria Santos", user.getName());
         assertEquals("maria@email.com", user.getEmail().value());
     }
 
@@ -64,14 +63,13 @@ class UserMapperTest {
 
     @Test
     void deveManterConsistenciaEntreConversoes() {
-        Name name = new Name("Pedro Costa");
         Email email = Email.de("pedro@email.com");
-        User originalUser = User.newUser(name, email);
+        User originalUser = User.newUser("Pedro Costa", email);
 
         UserEntity entity = userMapper.toEntity(originalUser);
         User convertedUser = userMapper.toDomain(entity);
 
-        assertEquals(originalUser.getName().value(), convertedUser.getName().value());
+        assertEquals(originalUser.getName(), convertedUser.getName());
         assertEquals(originalUser.getEmail().value(), convertedUser.getEmail().value());
     }
 }

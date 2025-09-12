@@ -2,7 +2,7 @@ package com.rhenan.taskflow.infra.persistence.jpa.mapper;
 
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
 import com.rhenan.taskflow.domain.model.Task;
-import com.rhenan.taskflow.domain.valueObjects.*;
+import com.rhenan.taskflow.domain.valueObjects.UserId;
 import com.rhenan.taskflow.infra.persistence.jpa.entity.TaskEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +26,8 @@ class TaskMapperTest {
         UserId userId = new UserId(UUID.randomUUID());
         Task task = Task.createTask(
             userId,
-            new Title("Tarefa Teste"),
-            new Description("Descrição da tarefa")
+            "Tarefa Teste",
+            "Descrição da tarefa"
         );
 
         TaskEntity entity = taskMapper.toEntity(task);
@@ -61,8 +61,8 @@ class TaskMapperTest {
         Task task = taskMapper.toDomain(entity);
 
         assertNotNull(task);
-        assertEquals("Task Entity", task.getTitle().value());
-        assertEquals("Descrição entity", task.getDescription().value());
+        assertEquals("Task Entity", task.getTitle());
+        assertEquals("Descrição entity", task.getDescription());
         assertEquals(entity.getUserId(), task.getUserId().value());
     }
 
@@ -78,15 +78,15 @@ class TaskMapperTest {
         UserId userId = new UserId(UUID.randomUUID());
         Task originalTask = Task.createTask(
             userId,
-            new Title("Consistência"),
-            new Description("Teste de consistência")
+            "Consistência",
+            "Teste de consistência"
         );
 
         TaskEntity entity = taskMapper.toEntity(originalTask);
         Task convertedTask = taskMapper.toDomain(entity);
 
-        assertEquals(originalTask.getTitle().value(), convertedTask.getTitle().value());
-        assertEquals(originalTask.getDescription().value(), convertedTask.getDescription().value());
+        assertEquals(originalTask.getTitle(), convertedTask.getTitle());
+        assertEquals(originalTask.getDescription(), convertedTask.getDescription());
         assertEquals(originalTask.getUserId().value(), convertedTask.getUserId().value());
     }
 }

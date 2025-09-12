@@ -12,8 +12,8 @@ public class SubTaskMapper {
         return new SubTaskResponse(
             subTask.getId().value(),
             subTask.getTaskId().value(),
-            subTask.getTitle().value(),
-            subTask.getDescription() != null ? subTask.getDescription().value() : null,
+            subTask.getTitle(),
+            subTask.getDescription(),
             subTask.getStatus(),
             subTask.getCreatedAt(),
             subTask.getCompletedAt()

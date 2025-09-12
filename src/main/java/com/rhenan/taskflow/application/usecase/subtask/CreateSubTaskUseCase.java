@@ -7,9 +7,7 @@ import com.rhenan.taskflow.domain.exception.NotFoundException;
 import com.rhenan.taskflow.domain.model.SubTask;
 import com.rhenan.taskflow.domain.model.Task;
 import com.rhenan.taskflow.domain.repository.TaskRepository;
-import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
-import com.rhenan.taskflow.domain.valueObjects.Title;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +25,7 @@ public class CreateSubTaskUseCase {
         Task task = taskRepository.findById(taskId)
             .orElseThrow(() -> new NotFoundException("Tarefa não encontrada"));
         
-        Title title = new Title(request.title());
-        Description description = request.description() != null ? new Description(request.description()) : null;
-        
-        task.addSubTask(title, description);
+        task.addSubTask(request.title(), request.description());
         Task savedTask = taskRepository.save(task);
         
         SubTask createdSubTask = savedTask.getSubTask().get(savedTask.getSubTask().size() - 1);

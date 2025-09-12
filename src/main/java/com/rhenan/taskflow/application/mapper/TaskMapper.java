@@ -24,8 +24,8 @@ public class TaskMapper {
         return new TaskResponse(
             task.getId().value(),
             task.getUserId().value(),
-            task.getTitle().value(),
-            task.getDescription() != null ? task.getDescription().value() : null,
+            task.getTitle(),
+            task.getDescription(),
             task.getStatus(),
             task.getCreatedAt(),
             task.getCompletedAt(),

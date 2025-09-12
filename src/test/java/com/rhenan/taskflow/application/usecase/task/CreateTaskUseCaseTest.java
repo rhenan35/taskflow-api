@@ -82,7 +82,7 @@ class CreateTaskUseCaseTest {
 
         assertNotNull(response);
         assertEquals("Test Task", response.title());
-        assertNull(response.description());
+        assertEquals("", response.description());
         assertEquals(userUuid, response.userId());
         
         verify(userRepository).existsById(userId);

@@ -2,7 +2,7 @@ package com.rhenan.taskflow.infra.persistence.jpa.adapter;
 
 import com.rhenan.taskflow.domain.model.User;
 import com.rhenan.taskflow.domain.valueObjects.Email;
-import com.rhenan.taskflow.domain.valueObjects.Name;
+
 import com.rhenan.taskflow.domain.valueObjects.UserId;
 import com.rhenan.taskflow.infra.persistence.jpa.entity.UserEntity;
 import com.rhenan.taskflow.infra.persistence.jpa.mapper.UserMapper;
@@ -42,7 +42,7 @@ class UserRepositoryAdapterTest {
     void setUp() {
         userId = new UserId(UUID.randomUUID());
         email = Email.de("teste@email.com");
-        user = User.newUser(new Name("João Silva"), email);
+        user = User.newUser("João Silva", email);
         
         userEntity = new UserEntity();
         userEntity.setId(userId.value());

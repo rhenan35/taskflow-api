@@ -1,5 +1,6 @@
 package com.rhenan.taskflow.domain.repository;
 
+import com.rhenan.taskflow.domain.enums.ActivityStatus;
 import com.rhenan.taskflow.domain.model.Task;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
 import com.rhenan.taskflow.domain.valueObjects.UserId;
@@ -14,6 +15,8 @@ public interface TaskRepository {
     Optional<Task> findById(TaskId taskId);
     
     List<Task> findByUserId(UserId userId);
+    
+    List<Task> findByStatus(ActivityStatus status);
     
     void deleteById(TaskId taskId);
     

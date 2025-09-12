@@ -1,10 +1,8 @@
 package com.rhenan.taskflow.infra.persistence.jpa.adapter;
 
 import com.rhenan.taskflow.domain.model.SubTask;
-import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.SubTaskId;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
-import com.rhenan.taskflow.domain.valueObjects.Title;
 import com.rhenan.taskflow.infra.persistence.jpa.entity.SubTaskEntity;
 import com.rhenan.taskflow.infra.persistence.jpa.mapper.SubTaskMapper;
 import com.rhenan.taskflow.infra.persistence.jpa.repository.SubTaskJpaRepository;
@@ -46,8 +44,8 @@ class SubTaskRepositoryAdapterTest {
         taskId = new TaskId(UUID.randomUUID());
         subTask = SubTask.newSubTask(
             taskId,
-            new Title("SubTarefa Teste"),
-            new Description("Descrição da subtarefa")
+            "SubTarefa Teste",
+            "Descrição da subtarefa"
         );
         
         subTaskEntity = new SubTaskEntity();
@@ -104,8 +102,8 @@ class SubTaskRepositoryAdapterTest {
         
         SubTask subTask2 = SubTask.newSubTask(
             taskId,
-            new Title("Segunda SubTarefa"),
-            new Description("Segunda descrição")
+            "Segunda SubTarefa",
+            "Segunda descrição"
         );
         
         List<SubTaskEntity> entities = List.of(subTaskEntity, subTaskEntity2);

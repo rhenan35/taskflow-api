@@ -1,7 +1,7 @@
 package com.rhenan.taskflow.domain.model;
 
 import com.rhenan.taskflow.domain.valueObjects.Email;
-import com.rhenan.taskflow.domain.valueObjects.Name;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,13 +10,12 @@ public class UserTest {
     
     @Test
     void deveCriarNovoUsuario() {
-        Name name = new Name("João Silva");
         Email email = Email.de("joao@email.com");
         
-        User user = User.newUser(name, email);
+        User user = User.newUser("João Silva", email);
         
         assertNotNull(user.getId());
-        assertEquals(name, user.getName());
+        assertEquals("João Silva", user.getName());
         assertEquals(email, user.getEmail());
     }
     
@@ -28,16 +27,14 @@ public class UserTest {
     
     @Test
     void naoDevePermitirEmailNulo() {
-        Name name = new Name("João Silva");
-        assertThrows(NullPointerException.class, () -> User.newUser(name, null));
+        assertThrows(NullPointerException.class, () -> User.newUser("João Silva", null));
     }
     
     @Test
     void deveSerIgualQuandoMesmoId() {
-        Name name = new Name("João Silva");
         Email email = Email.de("joao@email.com");
-        User user1 = User.newUser(name, email);
-        User user2 = User.newUser(name, email);
+        User user1 = User.newUser("João Silva", email);
+        User user2 = User.newUser("João Silva", email);
         
         assertNotEquals(user1, user2);
         assertEquals(user1, user1);
@@ -45,9 +42,8 @@ public class UserTest {
     
     @Test
     void deveGerarHashCodeConsistente() {
-        Name name = new Name("João Silva");
         Email email = Email.de("joao@email.com");
-        User user = User.newUser(name, email);
+        User user = User.newUser("João Silva", email);
         
         int hash1 = user.hashCode();
         int hash2 = user.hashCode();

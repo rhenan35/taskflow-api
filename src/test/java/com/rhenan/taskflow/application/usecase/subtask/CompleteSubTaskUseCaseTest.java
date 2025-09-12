@@ -4,10 +4,8 @@ import com.rhenan.taskflow.application.dto.response.SubTaskResponse;
 import com.rhenan.taskflow.domain.exception.NotFoundException;
 import com.rhenan.taskflow.domain.model.SubTask;
 import com.rhenan.taskflow.domain.repository.SubTaskRepository;
-import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.SubTaskId;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
-import com.rhenan.taskflow.domain.valueObjects.Title;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,11 +40,7 @@ class CompleteSubTaskUseCaseTest {
         subTaskId = new SubTaskId(subTaskUuid);
         taskId = TaskId.fromString("550e8400-e29b-41d4-a716-446655440001");
         
-        subTask = SubTask.newSubTask(
-            taskId,
-            new Title("Test SubTask"),
-            new Description("Test Description")
-        );
+        subTask = SubTask.newSubTask(taskId, "Test SubTask", "Test Description");
     }
 
     @Test

@@ -1,9 +1,7 @@
 package com.rhenan.taskflow.infra.persistence.jpa.adapter;
 
 import com.rhenan.taskflow.domain.model.Task;
-import com.rhenan.taskflow.domain.valueObjects.Description;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
-import com.rhenan.taskflow.domain.valueObjects.Title;
 import com.rhenan.taskflow.domain.valueObjects.UserId;
 import com.rhenan.taskflow.infra.persistence.jpa.entity.TaskEntity;
 import com.rhenan.taskflow.infra.persistence.jpa.mapper.TaskMapper;
@@ -46,8 +44,8 @@ class TaskRepositoryAdapterTest {
         userId = new UserId(UUID.randomUUID());
         task = Task.createTask(
             userId,
-            new Title("Tarefa Teste"),
-            new Description("Descrição da tarefa")
+            "Tarefa Teste",
+            "Descrição da tarefa"
         );
         
         taskEntity = new TaskEntity();
@@ -104,8 +102,8 @@ class TaskRepositoryAdapterTest {
         
         Task task2 = Task.createTask(
             userId,
-            new Title("Segunda Tarefa"),
-            new Description("Segunda descrição")
+            "Segunda Tarefa",
+            "Segunda descrição"
         );
         
         List<TaskEntity> entities = List.of(taskEntity, taskEntity2);

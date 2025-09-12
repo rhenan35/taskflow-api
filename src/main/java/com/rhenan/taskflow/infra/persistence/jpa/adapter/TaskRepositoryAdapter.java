@@ -1,5 +1,6 @@
 package com.rhenan.taskflow.infra.persistence.jpa.adapter;
 
+import com.rhenan.taskflow.domain.enums.ActivityStatus;
 import com.rhenan.taskflow.domain.model.Task;
 import com.rhenan.taskflow.domain.repository.TaskRepository;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
@@ -36,6 +37,14 @@ public class TaskRepositoryAdapter implements TaskRepository {
     @Override
     public List<Task> findByUserId(UserId userId) {
         return taskJpaRepository.findByUserId(userId.value())
+                .stream()
+                .map(taskMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Task> findByStatus(ActivityStatus status) {
+        return taskJpaRepository.findByStatus(status)
                 .stream()
                 .map(taskMapper::toDomain)
                 .toList();
