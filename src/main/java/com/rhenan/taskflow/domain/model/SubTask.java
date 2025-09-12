@@ -1,10 +1,9 @@
 package com.rhenan.taskflow.domain.model;
 
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
-import com.rhenan.taskflow.domain.valueObjects.Description;
+import com.rhenan.taskflow.domain.exception.BusinessRuleException;
 import com.rhenan.taskflow.domain.valueObjects.SubTaskId;
 import com.rhenan.taskflow.domain.valueObjects.TaskId;
-import com.rhenan.taskflow.domain.valueObjects.Title;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -13,27 +12,43 @@ public class SubTask {
 
     private final SubTaskId id;
     private final TaskId taskId;
-    private final Title title;
-    private final Description description;
+    private final String title;
+    private final String description;
     private ActivityStatus status;
     private final Instant createdAt;
     private Instant completedAt;
 
     private SubTask(SubTaskId id,
                     TaskId taskId,
-                    Title title,
-                    Description description,
+                    String title,
+                    String description,
                     ActivityStatus status,
                     Instant createdAt) {
         this.id = Objects.requireNonNull(id);
         this.taskId = Objects.requireNonNull(taskId);
-        this.title = Objects.requireNonNull(title);
-        this.description = description;
+        this.title = validateTitle(title);
+        this.description = validateDescription(description);
         this.status = Objects.requireNonNull(status);
         this.createdAt = Objects.requireNonNull(createdAt);
     }
+    
+    private String validateTitle(String title) {
+        Objects.requireNonNull(title, "Title não pode ser nulo!");
+        String trimmedTitle = title.trim();
+        if (trimmedTitle.isBlank()) {
+            throw new IllegalArgumentException("Title não pode ser vazio!");
+        }
+        if (trimmedTitle.length() > 200) {
+            throw new IllegalArgumentException("Title passou de 200 caracteres");
+        }
+        return trimmedTitle;
+    }
+    
+    private String validateDescription(String description) {
+        return description != null ? description.trim() : "";
+    }
 
-    public static SubTask newSubTask(TaskId taskId, Title title, Description description) {
+    public static SubTask newSubTask(TaskId taskId, String title, String description) {
         return new SubTask(
                 SubTaskId.newSubTask(),
                 taskId,
@@ -44,14 +59,30 @@ public class SubTask {
         );
     }
 
+    public static SubTask fromExisting(SubTaskId id, TaskId taskId, String title, String description, 
+                                       ActivityStatus status, Instant createdAt, Instant completedAt) {
+        SubTask subTask = new SubTask(id, taskId, title, description, status, createdAt);
+        subTask.completedAt = completedAt;
+        return subTask;
+    }
+
     public void updateStatus(ActivityStatus newStatus) {
-        if (!status.allowTransition(newStatus)) {
-            throw new IllegalStateException("O stats " + status + " não pode ser alterado para " + newStatus);
+        Objects.requireNonNull(newStatus, "Status não pode ser nulo");
+        
+        if (!this.status.allowTransition(newStatus)) {
+            throw new BusinessRuleException(
+                String.format("Transição inválida de %s para %s", this.status, newStatus)
+            );
         }
+        
         this.status = newStatus;
         if (newStatus == ActivityStatus.COMPLETED) {
             this.completedAt = Instant.now();
         }
+    }
+
+    public void finish() {
+        updateStatus(ActivityStatus.COMPLETED);
     }
 
     public SubTaskId getId() {
@@ -62,11 +93,11 @@ public class SubTask {
         return taskId;
     }
 
-    public Title getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public Description getDescription() {
+    public String getDescription() {
         return description;
     }
 
