@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.rhenan.taskflow.application.usecase.user.CreateUserUseCase;
 import com.rhenan.taskflow.application.usecase.user.FindUserByIdUseCase;
 import com.rhenan.taskflow.api.controller.UserController;
+import com.rhenan.taskflow.application.service.JwtTokenService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,6 +24,9 @@ class SecurityConfigTest {
 
     @MockitoBean
     private FindUserByIdUseCase findUserByIdUseCase;
+
+    @MockitoBean
+    private JwtTokenService jwtTokenService;
 
     @Test
     void shouldAllowAccessToPublicEndpoints() throws Exception {

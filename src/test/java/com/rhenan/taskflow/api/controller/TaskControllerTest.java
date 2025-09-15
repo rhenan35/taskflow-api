@@ -16,6 +16,7 @@ import com.rhenan.taskflow.application.usecase.task.UpdateTaskStatusUseCase;
 import com.rhenan.taskflow.application.usecase.subtask.CreateSubTaskUseCase;
 import com.rhenan.taskflow.application.usecase.subtask.FindSubTasksByTaskIdUseCase;
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
+import com.rhenan.taskflow.application.service.JwtTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -62,6 +63,9 @@ class TaskControllerTest {
     @MockitoBean
     private FindSubTasksByTaskIdUseCase findSubTasksByTaskIdUseCase;
 
+    @MockitoBean
+    private JwtTokenService jwtTokenService;
+
     @Test
     void deveListarTarefasPorStatus() throws Exception {
         TaskResponse taskResponse = new TaskResponse(
@@ -78,7 +82,7 @@ class TaskControllerTest {
         when(findTasksByStatusUseCase.execute(ActivityStatus.PENDING))
                 .thenReturn(List.of(taskResponse));
 
-        mockMvc.perform(get("/tarefas")
+        mockMvc.perform(get("/tasks")
                         .param("status", "PENDING"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("Tarefa Teste"))
@@ -107,7 +111,7 @@ class TaskControllerTest {
         when(createTaskUseCase.execute(any(CreateTaskRequest.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/tarefas")
+        mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -123,7 +127,7 @@ class TaskControllerTest {
                 "Descrição"
         );
 
-        mockMvc.perform(post("/tarefas")
+        mockMvc.perform(post("/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -151,7 +155,7 @@ class TaskControllerTest {
         when(createSubTaskUseCase.execute(any(CreateSubTaskRequest.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/tarefas/{tarefaId}/subtarefas", tarefaId)
+        mockMvc.perform(post("/tasks/{tarefaId}/subtasks", tarefaId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -175,7 +179,7 @@ class TaskControllerTest {
         when(findSubTasksByTaskIdUseCase.execute(tarefaId))
                 .thenReturn(List.of(subTaskResponse));
 
-        mockMvc.perform(get("/tarefas/{tarefaId}/subtarefas", tarefaId))
+        mockMvc.perform(get("/tasks/{tarefaId}/subtasks", tarefaId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("SubTarefa Teste"))
                 .andExpect(jsonPath("$[0].taskId").value(tarefaId.toString()));
@@ -200,7 +204,7 @@ class TaskControllerTest {
         when(updateTaskStatusUseCase.execute(eq(taskId), eq(ActivityStatus.COMPLETED)))
                 .thenReturn(response);
 
-        mockMvc.perform(patch("/tarefas/{id}/status", taskId)
+        mockMvc.perform(patch("/tasks/{id}/status", taskId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -232,7 +236,7 @@ class TaskControllerTest {
         when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
                 .thenReturn(pageResponse);
 
-        mockMvc.perform(get("/tarefas/busca")
+        mockMvc.perform(get("/tasks/search")
                         .param("status", "PENDING")
                         .param("userId", userId.toString())
                         .param("page", "0")
@@ -270,7 +274,7 @@ class TaskControllerTest {
         when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
                 .thenReturn(pageResponse);
 
-        mockMvc.perform(get("/tarefas/busca")
+        mockMvc.perform(get("/tasks/search")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -301,7 +305,7 @@ class TaskControllerTest {
         when(findTasksWithFiltersUseCase.execute(any(TaskFilterRequest.class), any(PageRequest.class)))
                 .thenReturn(pageResponse);
 
-        mockMvc.perform(get("/tarefas/busca")
+        mockMvc.perform(get("/tasks/search")
                         .param("createdAfter", "2024-01-01T00:00:00")
                         .param("createdBefore", "2024-12-31T23:59:59")
                         .param("size", "5"))
@@ -315,7 +319,7 @@ class TaskControllerTest {
         UUID taskId = UUID.randomUUID();
         String invalidJson = "{\"status\":\"INVALID_STATUS\"}";
 
-        mockMvc.perform(patch("/tarefas/{id}/status", taskId)
+        mockMvc.perform(patch("/tasks/{id}/status", taskId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidJson))
                 .andExpect(status().isBadRequest());
