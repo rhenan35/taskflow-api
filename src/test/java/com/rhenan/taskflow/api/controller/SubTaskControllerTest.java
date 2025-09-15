@@ -9,6 +9,7 @@ import com.rhenan.taskflow.application.usecase.subtask.DeleteSubTaskUseCase;
 import com.rhenan.taskflow.application.usecase.subtask.FindSubTasksWithFiltersUseCase;
 import com.rhenan.taskflow.application.usecase.subtask.UpdateSubTaskStatusUseCase;
 import com.rhenan.taskflow.domain.enums.ActivityStatus;
+import com.rhenan.taskflow.application.service.JwtTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -46,6 +47,9 @@ class SubTaskControllerTest {
     @MockitoBean
     private FindSubTasksWithFiltersUseCase findSubTasksWithFiltersUseCase;
 
+    @MockitoBean
+    private JwtTokenService jwtTokenService;
+
     @Test
     void deveAtualizarStatusDaSubTarefa() throws Exception {
         UUID subTaskId = UUID.randomUUID();
@@ -64,7 +68,7 @@ class SubTaskControllerTest {
         when(updateSubTaskStatusUseCase.execute(eq(subTaskId), eq(ActivityStatus.COMPLETED)))
                 .thenReturn(response);
 
-        mockMvc.perform(patch("/subtarefas/{id}/status", subTaskId)
+        mockMvc.perform(patch("/subtasks/{id}/status", subTaskId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -77,7 +81,7 @@ class SubTaskControllerTest {
         UUID subTaskId = UUID.randomUUID();
         String invalidJson = "{\"status\":\"INVALID_STATUS\"}";
 
-        mockMvc.perform(patch("/subtarefas/{id}/status", subTaskId)
+        mockMvc.perform(patch("/subtasks/{id}/status", subTaskId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidJson))
                 .andExpect(status().isBadRequest());
@@ -103,7 +107,7 @@ class SubTaskControllerTest {
         when(updateSubTaskStatusUseCase.execute(eq(subTaskId), eq(ActivityStatus.PENDING)))
                 .thenReturn(response);
 
-        mockMvc.perform(patch("/subtarefas/{id}/status", subTaskId)
+        mockMvc.perform(patch("/subtasks/{id}/status", subTaskId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -129,7 +133,7 @@ class SubTaskControllerTest {
         when(updateSubTaskStatusUseCase.execute(eq(subTaskId), eq(ActivityStatus.IN_PROGRESS)))
                 .thenReturn(response);
 
-        mockMvc.perform(patch("/subtarefas/{id}/status", subTaskId)
+        mockMvc.perform(patch("/subtasks/{id}/status", subTaskId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -160,7 +164,7 @@ class SubTaskControllerTest {
         when(findSubTasksWithFiltersUseCase.execute(any(SubTaskFilterRequest.class), any()))
                 .thenReturn(pageResponse);
 
-        mockMvc.perform(get("/subtarefas/busca")
+        mockMvc.perform(get("/subtasks/search")
                         .param("status", "PENDING")
                         .param("taskId", taskId.toString())
                         .param("title", "SubTarefa")
@@ -198,7 +202,7 @@ class SubTaskControllerTest {
         when(findSubTasksWithFiltersUseCase.execute(any(SubTaskFilterRequest.class), any()))
                 .thenReturn(pageResponse);
 
-        mockMvc.perform(get("/subtarefas/busca")
+        mockMvc.perform(get("/subtasks/search")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())

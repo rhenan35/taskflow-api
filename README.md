@@ -62,20 +62,16 @@ Para acessar os endpoints protegidos, utilize as credenciais fixas abaixo:
 - `GET /users/{id}` - Find user by ID
 
 ### **Tasks**
-- `GET /api/tasks` - List tasks with filters and pagination
-- `GET /api/tasks/{id}` - Find task by ID
-- `POST /api/tasks` - Create new task
-- `PUT /api/tasks/{id}` - Update task
-- `DELETE /api/tasks/{id}` - Delete task
-- `PATCH /api/tasks/{id}/status` - Update task status
+- `GET /tasks?status={status}` - List tasks by status
+- `GET /tasks/search` - Search tasks with filters and pagination
+- `POST /tasks` - Create new task
+- `PATCH /tasks/{id}/status` - Update task status
+- `POST /tasks/{taskId}/subtasks` - Create subtask for a task
+- `GET /tasks/{taskId}/subtasks` - List subtasks of a task
 
 ### **Subtasks**
-- `GET /api/subtasks` - List subtasks with filters and pagination
-- `GET /api/subtasks/{id}` - Find subtask by ID
-- `POST /api/subtasks` - Create new subtask
-- `PUT /api/subtasks/{id}` - Update subtask
-- `DELETE /api/subtasks/{id}` - Delete subtask
-- `PATCH /api/subtasks/{id}/status` - Update subtask status
+- `GET /subtasks/search` - Search subtasks with filters and pagination
+- `PATCH /subtasks/{id}/status` - Update subtask status
 
 ## 🔧 **Exemplos de Uso (cURL)**
 
@@ -83,12 +79,13 @@ Para acessar os endpoints protegidos, utilize as credenciais fixas abaixo:
 
 **1. Fazer Login (obter token):**
 ```bash
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@taskflow.com",
-    "password": "taskflow123"
-  }'
+curl --request POST \
+  --url http://localhost:8080/api/auth/login \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"email": "admin@taskflow.com",
+	"password": "taskflow123"
+}'
 ```
 
 **2. Use o token retornado** no header `Authorization: Bearer {SEU_TOKEN}` nas requisições abaixo.
@@ -99,19 +96,19 @@ curl -X POST http://localhost:8080/api/auth/login \
 ```bash
 curl --request POST \
   --url http://localhost:8080/users \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json' \
   --data '{
-    "name": "Josh92",
-    "email": "Fletcher_Ondricka55@yahoo.com"
-  }'
+	"name": "Gwen87", 
+	"email": "Keeley9@yahoo.com"
+}'
 ```
 
 **Find user by ID:**
 ```bash
 curl --request GET \
-  --url http://localhost:8080/users/1e894ff8-39ec-42d1-a43a-97adc1612c85 \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}'
+  --url http://localhost:8080/users/94c03f91-2465-4565-913d-197962232e35 \
+  --header 'Authorization: Bearer {token}'
 ```
 
 ### **Tasks**
@@ -120,37 +117,38 @@ curl --request GET \
 ```bash
 curl --request POST \
   --url http://localhost:8080/tasks \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json' \
   --data '{
-	"userId": "1e894ff8-39ec-42d1-a43a-97adc1612c85",
-	"title": "Senior Marketing Supervisor",
-	"description": "Clam vinitor supellex cui censura. Velit adsuesco caelestis stultus. Uterque audacia suffragium substantia tristis sto voluntarius."
+	"userId": "94c03f91-2465-4565-913d-197962232e35",
+	"title": "Direct Mobility Planner",
+	"description": "Cetera vicissitudo cultura.
+Tremo truculenter sub."
 }'
 ```
 
-**List pending tasks by status:**
+**List tasks by status:**
 ```bash
 curl --request GET \
   --url 'http://localhost:8080/tasks?status=PENDING' \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}'
+  --header 'Authorization: Bearer {token}'
 ```
 
-**List tasks with filters:**
+**Search tasks with filters:**
 ```bash
 curl --request GET \
-  --url 'http://localhost:8080/tasks/search?status=IN_PROGRESS&userId=uuid&title=projeto&createdAfter=2024-01-01T00%3A00%3A00&page=0&size=10&sortBy=createdAt&sortDirection=desc' \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
-  --header 'Accept: application/json'
+  --url 'http://localhost:8080/tasks/search?status=PENDING&userId=uuid&title=projeto&createdAfter=2024-01-01T00%3A00%3A00&page=0&size=10&sortBy=createdAt&sortDirection=desc' \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer {token}'
 ```
 
-**Update a task:**
+**Update task status:**
 ```bash
 curl --request PATCH \
   --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/status \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json' \
-  --data '{     "status": "IN_PROGRESS"   }'
+  --data '{"status": "IN_PROGRESS"}'
 ```
 
 ### **Subtasks**
@@ -159,12 +157,12 @@ curl --request PATCH \
 ```bash
 curl --request POST \
   --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/subtasks \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json' \
   --data '{
 	"taskId": "38467321-7573-477b-8695-a9f8d955e597",
-	"title": "Lead Accountability Administrator",
-	"description": "Umbra pectus ciminatio vos libero. Appositus vinitor abeo stipes itaque spoliatio. Sustineo apparatus sonitus et adfectus tergeo vilicus supra vester."
+	"title": "Internal Program Facilitator",
+	"description": "Usque sunt conventus ulciscor amitto amicitia nobis crepusculum acidus. Tondeo correptius suus ait. Coaegresco vis creta."
 }'
 ```
 
@@ -172,25 +170,25 @@ curl --request POST \
 ```bash
 curl --request GET \
   --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/subtasks \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}'
+  --header 'Authorization: Bearer {token}'
 ```
 
-**List subtasks with filters:**
+**Search subtasks with filters:**
 ```bash
 curl --request GET \
   --url 'http://localhost:8080/subtasks/search?status=PENDING&taskId=123e4567-e89b-12d3-a456-426614174000&title=exemplo&createdAfter=2024-01-01T00%3A00%3A00&createdBefore=2024-12-31T23%3A59%3A59&page=0&size=10&sort=createdAt&direction=desc' \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
   --header 'Accept: application/json' \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json'
 ```
 
-**Update a subtask:**
+**Update subtask status:**
 ```bash
 curl --request PATCH \
   --url http://localhost:8080/subtasks/d0c87edf-714c-45cc-aef3-5b00dbf6c24e/status \
-  --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json' \
-  --data '{     "status": "IN_PROGRESS"   }'
+  --data '{"status": "IN_PROGRESS"}'
 ```
 
 ## 🛠️ Tecnologias Utilizadas

@@ -1,5 +1,6 @@
 package com.rhenan.taskflow.api.config;
 
+import com.rhenan.taskflow.application.service.JwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,6 +26,9 @@ class BearerTokenAuthenticationFilterTest {
 
     @InjectMocks
     private BearerTokenAuthenticationFilter filter;
+
+    @Mock
+    private JwtTokenService jwtTokenService;
 
     @Mock
     private HttpServletRequest request;
@@ -44,7 +49,14 @@ class BearerTokenAuthenticationFilterTest {
 
     @Test
     void shouldAuthenticateWithValidBearerToken() throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn("Bearer valid-token-123");
+        String token = "valid-token-123";
+        UUID userId = UUID.randomUUID();
+        String email = "test@example.com";
+        
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(jwtTokenService.validateToken(token)).thenReturn(true);
+        when(jwtTokenService.extractUserId(token)).thenReturn(userId);
+        when(jwtTokenService.extractEmail(token)).thenReturn(email);
 
         filter.doFilterInternal(request, response, filterChain);
 
@@ -54,7 +66,10 @@ class BearerTokenAuthenticationFilterTest {
 
     @Test
     void shouldNotAuthenticateWithInvalidToken() throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn("Bearer short");
+        String token = "short";
+        
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(jwtTokenService.validateToken(token)).thenReturn(false);
 
         filter.doFilterInternal(request, response, filterChain);
 
@@ -104,7 +119,10 @@ class BearerTokenAuthenticationFilterTest {
 
     @Test
     void shouldHandleNullTokenGracefully() throws ServletException, IOException {
-        when(request.getHeader("Authorization")).thenReturn("Bearer null");
+        String token = "null";
+        
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(jwtTokenService.validateToken(token)).thenReturn(false);
 
         assertDoesNotThrow(() -> filter.doFilterInternal(request, response, filterChain));
         verify(filterChain).doFilter(request, response);
