@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/users")
 @RequiredArgsConstructor
-@Tag(name = "Users", description = "Operações relacionadas aos usuários")
+@Tag(name = "Users", description = "User-related operations")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
@@ -28,11 +28,11 @@ public class UserController {
     private final FindUserByIdUseCase findUserByIdUseCase;
 
     @PostMapping
-    @Operation(summary = "Criar usuário", description = "Cria um novo usuário no sistema")
+    @Operation(summary = "Create user", description = "Creates a new user in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
+        @ApiResponse(responseCode = "201", description = "User created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid data"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         UserResponse response = createUserUseCase.execute(request);
@@ -40,11 +40,11 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar usuário por ID", description = "Busca um usuário específico pelo ID")
+    @Operation(summary = "Find user by ID", description = "Finds a specific user by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
+        @ApiResponse(responseCode = "200", description = "User found"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
         UserResponse response = findUserByIdUseCase.execute(id);

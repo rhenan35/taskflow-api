@@ -40,124 +40,155 @@ Isso irá subir:
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
+## 🔐 **Autenticação**
+
+Para acessar os endpoints protegidos, utilize as credenciais fixas abaixo:
+
+**Credenciais de Teste:**
+- **Email:** `admin@taskflow.com`
+- **Senha:** `taskflow123`
+
+**Como obter o token:**
+1. Faça uma requisição POST para `/api/auth/login` com as credenciais acima
+2. Use o token retornado no header `Authorization: Bearer {token}` nas demais requisições
+
 ## 📋 **Endpoints Disponíveis**
 
-### **Tarefas**
-- `GET /api/tarefas` - Listar tarefas com filtros e paginação
-- `GET /api/tarefas/{id}` - Buscar tarefa por ID
-- `POST /api/tarefas` - Criar nova tarefa
-- `PUT /api/tarefas/{id}` - Atualizar tarefa
-- `DELETE /api/tarefas/{id}` - Deletar tarefa
-- `PATCH /api/tarefas/{id}/status` - Atualizar status da tarefa
+### **Autenticação**
+- `POST /api/auth/login` - Fazer login e obter token JWT
 
-### **Subtarefas**
-- `GET /api/subtarefas` - Listar subtarefas com filtros e paginação
-- `GET /api/subtarefas/{id}` - Buscar subtarefa por ID
-- `POST /api/subtarefas` - Criar nova subtarefa
-- `PUT /api/subtarefas/{id}` - Atualizar subtarefa
-- `DELETE /api/subtarefas/{id}` - Deletar subtarefa
-- `PATCH /api/subtarefas/{id}/status` - Atualizar status da subtarefa
+### **Users**
+- `POST /users` - Create new user
+- `GET /users/{id}` - Find user by ID
+
+### **Tasks**
+- `GET /tasks?status={status}` - List tasks by status
+- `GET /tasks/search` - Search tasks with filters and pagination
+- `POST /tasks` - Create new task
+- `PATCH /tasks/{id}/status` - Update task status
+- `POST /tasks/{taskId}/subtasks` - Create subtask for a task
+- `GET /tasks/{taskId}/subtasks` - List subtasks of a task
+
+### **Subtasks**
+- `GET /subtasks/search` - Search subtasks with filters and pagination
+- `PATCH /subtasks/{id}/status` - Update subtask status
 
 ## 🔧 **Exemplos de Uso (cURL)**
 
-> **Nota:** Esta seção contém exemplos práticos de requisições cURL para facilitar o teste e uso da API.
+> **⚠️ IMPORTANTE:** Todos os endpoints protegidos requerem autenticação JWT. Primeiro faça login para obter o token:
 
-### **Usuários**
-
-**Criar usuário:**
+**1. Fazer Login (obter token):**
 ```bash
 curl --request POST \
-  --url http://localhost:8080/usuarios \
-  --header 'Authorization: Bearer fef805a2-6bad-4f20-9d67-f454b744d3fe' \
+  --url http://localhost:8080/api/auth/login \
   --header 'Content-Type: application/json' \
   --data '{
-    "name": "Josh92",
-    "email": "Fletcher_Ondricka55@yahoo.com"
-  }'
-```
-
-**Consultar usuário por ID:**
-```bash
-curl --request GET \
-  --url http://localhost:8080/usuarios/1e894ff8-39ec-42d1-a43a-97adc1612c85 \
-  --header 'Authorization: Bearer 0224f274-e4ba-407d-a2f4-5f1b5c5ee177'
-```
-
-### **Tarefas**
-
-**Criar tarefa:**
-```bash
-curl --request POST \
-  --url http://localhost:8080/tarefas \
-  --header 'Authorization: Bearer meu-token-exemplo' \
-  --header 'Content-Type: application/json' \
-  --data '{
-	"userId": "1e894ff8-39ec-42d1-a43a-97adc1612c85",
-	"title": "Senior Marketing Supervisor",
-	"description": "Clam vinitor supellex cui censura. Velit adsuesco caelestis stultus. Uterque audacia suffragium substantia tristis sto voluntarius."
+	"email": "admin@taskflow.com",
+	"password": "taskflow123"
 }'
 ```
 
-**Listar tarefas pendentes por status:**
-```bash
-curl --request GET \
-  --url 'http://localhost:8080/tarefas?status=PENDING' \
-  --header 'Authorization: Bearer meu-token-exemplo'
-```
+**2. Use o token retornado** no header `Authorization: Bearer {SEU_TOKEN}` nas requisições abaixo.
 
-**Listar tarefas com filtros:**
-```bash
-curl --request GET \
-  --url 'http://localhost:8080/tarefas/search?status=IN_PROGRESS&userId=uuid&title=projeto&createdAfter=2024-01-01T00%3A00%3A00&page=0&size=10&sortBy=createdAt&sortDirection=desc' \
-  --header 'Accept: application/json'
-```
+### **Users**
 
-**Atualizar uma tarefa:**
-```bash
-curl --request PATCH \
-  --url http://localhost:8080/tarefas/38467321-7573-477b-8695-a9f8d955e597/status \
-  --header 'Authorization: Bearer meu-token-exemplo' \
-  --header 'Content-Type: application/json' \
-  --data '{     "status": "IN_PROGRESS"   }'
-```
-
-### **Subtarefas**
-
-**Criar uma subtarefa:**
+**Create user:**
 ```bash
 curl --request POST \
-  --url http://localhost:8080/tarefas/38467321-7573-477b-8695-a9f8d955e597/subtarefas \
-  --header 'Authorization: Bearer meu-token-exemplo' \
+  --url http://localhost:8080/users \
+  --header 'Authorization: Bearer {token}' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"name": "Gwen87", 
+	"email": "Keeley9@yahoo.com"
+}'
+```
+
+**Find user by ID:**
+```bash
+curl --request GET \
+  --url http://localhost:8080/users/94c03f91-2465-4565-913d-197962232e35 \
+  --header 'Authorization: Bearer {token}'
+```
+
+### **Tasks**
+
+**Create task:**
+```bash
+curl --request POST \
+  --url http://localhost:8080/tasks \
+  --header 'Authorization: Bearer {token}' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"userId": "94c03f91-2465-4565-913d-197962232e35",
+	"title": "Direct Mobility Planner",
+	"description": "Cetera vicissitudo cultura.
+Tremo truculenter sub."
+}'
+```
+
+**List tasks by status:**
+```bash
+curl --request GET \
+  --url 'http://localhost:8080/tasks?status=PENDING' \
+  --header 'Authorization: Bearer {token}'
+```
+
+**Search tasks with filters:**
+```bash
+curl --request GET \
+  --url 'http://localhost:8080/tasks/search?status=PENDING&userId=uuid&title=projeto&createdAfter=2024-01-01T00%3A00%3A00&page=0&size=10&sortBy=createdAt&sortDirection=desc' \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer {token}'
+```
+
+**Update task status:**
+```bash
+curl --request PATCH \
+  --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/status \
+  --header 'Authorization: Bearer {token}' \
+  --header 'Content-Type: application/json' \
+  --data '{"status": "IN_PROGRESS"}'
+```
+
+### **Subtasks**
+
+**Create a subtask:**
+```bash
+curl --request POST \
+  --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/subtasks \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json' \
   --data '{
 	"taskId": "38467321-7573-477b-8695-a9f8d955e597",
-	"title": "Lead Accountability Administrator",
-	"description": "Umbra pectus ciminatio vos libero. Appositus vinitor abeo stipes itaque spoliatio. Sustineo apparatus sonitus et adfectus tergeo vilicus supra vester."
+	"title": "Internal Program Facilitator",
+	"description": "Usque sunt conventus ulciscor amitto amicitia nobis crepusculum acidus. Tondeo correptius suus ait. Coaegresco vis creta."
 }'
 ```
 
-**Listar subtarefas:**
+**List subtasks:**
 ```bash
 curl --request GET \
-  --url http://localhost:8080/tarefas/38467321-7573-477b-8695-a9f8d955e597/subtarefas \
-  --header 'Authorization: Bearer meu-token-exemplo'
+  --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/subtasks \
+  --header 'Authorization: Bearer {token}'
 ```
 
-**Listar subtarefas com filtros:**
+**Search subtasks with filters:**
 ```bash
 curl --request GET \
-  --url 'http://localhost:8080/subtarefas/busca?status=PENDING&taskId=123e4567-e89b-12d3-a456-426614174000&title=exemplo&createdAfter=2024-01-01T00%3A00%3A00&createdBefore=2024-12-31T23%3A59%3A59&page=0&size=10&sort=createdAt&direction=desc' \
+  --url 'http://localhost:8080/subtasks/search?status=PENDING&taskId=123e4567-e89b-12d3-a456-426614174000&title=exemplo&createdAfter=2024-01-01T00%3A00%3A00&createdBefore=2024-12-31T23%3A59%3A59&page=0&size=10&sort=createdAt&direction=desc' \
   --header 'Accept: application/json' \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json'
 ```
 
-**Atualizar uma subtarefa:**
+**Update subtask status:**
 ```bash
 curl --request PATCH \
-  --url http://localhost:8080/subtarefas/d0c87edf-714c-45cc-aef3-5b00dbf6c24e/status \
-  --header 'Authorization: Bearer meu-token-exemplo' \
+  --url http://localhost:8080/subtasks/d0c87edf-714c-45cc-aef3-5b00dbf6c24e/status \
+  --header 'Authorization: Bearer {token}' \
   --header 'Content-Type: application/json' \
-  --data '{     "status": "IN_PROGRESS"   }'
+  --data '{"status": "IN_PROGRESS"}'
 ```
 
 ## 🛠️ Tecnologias Utilizadas
