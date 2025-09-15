@@ -57,6 +57,10 @@ Para acessar os endpoints protegidos, utilize as credenciais fixas abaixo:
 ### **Autenticação**
 - `POST /api/auth/login` - Fazer login e obter token JWT
 
+### **Users**
+- `POST /users` - Create new user
+- `GET /users/{id}` - Find user by ID
+
 ### **Tasks**
 - `GET /api/tasks` - List tasks with filters and pagination
 - `GET /api/tasks/{id}` - Find task by ID
