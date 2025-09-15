@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/tarefas")
+@RequestMapping("/tasks")
 @RequiredArgsConstructor
-@Tag(name = "Tasks", description = "Operações relacionadas às tarefas")
+@Tag(name = "Tasks", description = "Task-related operations")
 @SecurityRequirement(name = "bearerAuth")
 public class TaskController {
 
@@ -45,22 +45,22 @@ public class TaskController {
     private final FindSubTasksByTaskIdUseCase findSubTasksByTaskIdUseCase;
 
     @GetMapping
-    @Operation(summary = "Listar tarefas por status", description = "Lista tarefas filtradas por status")
+    @Operation(summary = "List tasks by status", description = "Lists tasks filtered by status")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Tarefas encontradas"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
+        @ApiResponse(responseCode = "200", description = "Tasks found"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<List<TaskResponse>> getTasksByStatus(@RequestParam ActivityStatus status) {
         List<TaskResponse> response = findTasksByStatusUseCase.execute(status);
         return ResponseEntity.ok(response);
     }
     
-    @GetMapping("/busca")
-    @Operation(summary = "Buscar tarefas com filtros e paginação", description = "Busca tarefas com filtros combinados e paginação")
+    @GetMapping("/search")
+    @Operation(summary = "Search tasks with filters and pagination", description = "Searches tasks with combined filters and pagination")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Tarefas encontradas"),
-        @ApiResponse(responseCode = "400", description = "Parâmetros inválidos"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
+        @ApiResponse(responseCode = "200", description = "Tasks found"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameters"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<PageResponse<TaskResponse>> searchTasks(
             @RequestParam(required = false) ActivityStatus status,
@@ -88,50 +88,50 @@ public class TaskController {
     }
 
     @PostMapping
-    @Operation(summary = "Criar tarefa", description = "Cria uma nova tarefa no sistema")
+    @Operation(summary = "Create task", description = "Creates a new task in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tarefa criada com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado"),
-        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+        @ApiResponse(responseCode = "201", description = "Task created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid data"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody CreateTaskRequest request) {
         TaskResponse response = createTaskUseCase.execute(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/{tarefaId}/subtarefas")
-    @Operation(summary = "Criar subtarefa", description = "Cria uma nova subtarefa para uma tarefa específica")
+    @PostMapping("/{taskId}/subtasks")
+    @Operation(summary = "Create subtask", description = "Creates a new subtask for a specific task")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Subtarefa criada com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado"),
-        @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")
+        @ApiResponse(responseCode = "201", description = "Subtask created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid data"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponse(responseCode = "404", description = "Task not found")
     })
-    public ResponseEntity<SubTaskResponse> createSubTask(@PathVariable UUID tarefaId, @Valid @RequestBody CreateSubTaskRequest request) {
+    public ResponseEntity<SubTaskResponse> createSubTask(@PathVariable UUID taskId, @Valid @RequestBody CreateSubTaskRequest request) {
         SubTaskResponse response = createSubTaskUseCase.execute(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/{tarefaId}/subtarefas")
-    @Operation(summary = "Listar subtarefas de uma tarefa", description = "Lista todas as subtarefas de uma tarefa específica")
+    @GetMapping("/{taskId}/subtasks")
+    @Operation(summary = "List subtasks of a task", description = "Lists all subtasks of a specific task")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Subtarefas encontradas"),
-        @ApiResponse(responseCode = "404", description = "Tarefa não encontrada"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
+        @ApiResponse(responseCode = "200", description = "Subtasks found"),
+        @ApiResponse(responseCode = "404", description = "Task not found"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public ResponseEntity<List<SubTaskResponse>> getSubTasksByTaskId(@PathVariable UUID tarefaId) {
-        List<SubTaskResponse> response = findSubTasksByTaskIdUseCase.execute(tarefaId);
+    public ResponseEntity<List<SubTaskResponse>> getSubTasksByTaskId(@PathVariable UUID taskId) {
+        List<SubTaskResponse> response = findSubTasksByTaskIdUseCase.execute(taskId);
         return ResponseEntity.ok(response);
     }
     
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Atualizar status da tarefa", description = "Atualiza o status de uma tarefa")
+    @Operation(summary = "Update task status", description = "Updates the status of a task")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Status atualizado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Tarefa não encontrada"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
+        @ApiResponse(responseCode = "200", description = "Status updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Task not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid data"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<TaskResponse> updateTaskStatus(@PathVariable UUID id,
                                                          @Valid @RequestBody UpdateStatusRequest request) {

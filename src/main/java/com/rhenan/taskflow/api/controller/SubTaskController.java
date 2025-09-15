@@ -21,21 +21,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/subtarefas")
+@RequestMapping("/subtasks")
 @RequiredArgsConstructor
-@Tag(name = "SubTasks", description = "Operações relacionadas às subtarefas")
+@Tag(name = "SubTasks", description = "Subtask-related operations")
 @SecurityRequirement(name = "bearerAuth")
 public class SubTaskController {
 
     private final UpdateSubTaskStatusUseCase updateSubTaskStatusUseCase;
     private final FindSubTasksWithFiltersUseCase findSubTasksWithFiltersUseCase;
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Atualizar status da subtarefa", description = "Atualiza o status de uma subtarefa")
+    @Operation(summary = "Update subtask status", description = "Updates the status of a subtask")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Status atualizado com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Subtarefa não encontrada"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
+        @ApiResponse(responseCode = "200", description = "Status updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Subtask not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid data"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<SubTaskResponse> updateSubTaskStatus(@PathVariable UUID id,
                                                                @Valid @RequestBody UpdateStatusRequest request) {
@@ -43,12 +43,12 @@ public class SubTaskController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/busca")
-    @Operation(summary = "Buscar subtarefas com filtros e paginação", description = "Busca subtarefas com filtros combinados e paginação")
+    @GetMapping("/search")
+    @Operation(summary = "Search subtasks with filters and pagination", description = "Searches subtasks with combined filters and pagination")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Subtarefas encontradas"),
-        @ApiResponse(responseCode = "400", description = "Parâmetros inválidos"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
+        @ApiResponse(responseCode = "200", description = "Subtasks found"),
+        @ApiResponse(responseCode = "400", description = "Invalid parameters"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<PageResponse<SubTaskResponse>> searchSubTasks(
             @RequestParam(required = false) ActivityStatus status,

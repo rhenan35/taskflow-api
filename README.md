@@ -57,21 +57,21 @@ Para acessar os endpoints protegidos, utilize as credenciais fixas abaixo:
 ### **Autenticação**
 - `POST /api/auth/login` - Fazer login e obter token JWT
 
-### **Tarefas**
-- `GET /api/tarefas` - Listar tarefas com filtros e paginação
-- `GET /api/tarefas/{id}` - Buscar tarefa por ID
-- `POST /api/tarefas` - Criar nova tarefa
-- `PUT /api/tarefas/{id}` - Atualizar tarefa
-- `DELETE /api/tarefas/{id}` - Deletar tarefa
-- `PATCH /api/tarefas/{id}/status` - Atualizar status da tarefa
+### **Tasks**
+- `GET /api/tasks` - List tasks with filters and pagination
+- `GET /api/tasks/{id}` - Find task by ID
+- `POST /api/tasks` - Create new task
+- `PUT /api/tasks/{id}` - Update task
+- `DELETE /api/tasks/{id}` - Delete task
+- `PATCH /api/tasks/{id}/status` - Update task status
 
-### **Subtarefas**
-- `GET /api/subtarefas` - Listar subtarefas com filtros e paginação
-- `GET /api/subtarefas/{id}` - Buscar subtarefa por ID
-- `POST /api/subtarefas` - Criar nova subtarefa
-- `PUT /api/subtarefas/{id}` - Atualizar subtarefa
-- `DELETE /api/subtarefas/{id}` - Deletar subtarefa
-- `PATCH /api/subtarefas/{id}/status` - Atualizar status da subtarefa
+### **Subtasks**
+- `GET /api/subtasks` - List subtasks with filters and pagination
+- `GET /api/subtasks/{id}` - Find subtask by ID
+- `POST /api/subtasks` - Create new subtask
+- `PUT /api/subtasks/{id}` - Update subtask
+- `DELETE /api/subtasks/{id}` - Delete subtask
+- `PATCH /api/subtasks/{id}/status` - Update subtask status
 
 ## 🔧 **Exemplos de Uso (cURL)**
 
@@ -89,12 +89,12 @@ curl -X POST http://localhost:8080/api/auth/login \
 
 **2. Use o token retornado** no header `Authorization: Bearer {SEU_TOKEN}` nas requisições abaixo.
 
-### **Usuários**
+### **Users**
 
-**Criar usuário:**
+**Create user:**
 ```bash
 curl --request POST \
-  --url http://localhost:8080/usuarios \
+  --url http://localhost:8080/users \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -103,19 +103,19 @@ curl --request POST \
   }'
 ```
 
-**Consultar usuário por ID:**
+**Find user by ID:**
 ```bash
 curl --request GET \
-  --url http://localhost:8080/usuarios/1e894ff8-39ec-42d1-a43a-97adc1612c85 \
+  --url http://localhost:8080/users/1e894ff8-39ec-42d1-a43a-97adc1612c85 \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}'
 ```
 
-### **Tarefas**
+### **Tasks**
 
-**Criar tarefa:**
+**Create task:**
 ```bash
 curl --request POST \
-  --url http://localhost:8080/tarefas \
+  --url http://localhost:8080/tasks \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -125,36 +125,36 @@ curl --request POST \
 }'
 ```
 
-**Listar tarefas pendentes por status:**
+**List pending tasks by status:**
 ```bash
 curl --request GET \
-  --url 'http://localhost:8080/tarefas?status=PENDING' \
+  --url 'http://localhost:8080/tasks?status=PENDING' \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}'
 ```
 
-**Listar tarefas com filtros:**
+**List tasks with filters:**
 ```bash
 curl --request GET \
-  --url 'http://localhost:8080/tarefas/search?status=IN_PROGRESS&userId=uuid&title=projeto&createdAfter=2024-01-01T00%3A00%3A00&page=0&size=10&sortBy=createdAt&sortDirection=desc' \
+  --url 'http://localhost:8080/tasks/search?status=IN_PROGRESS&userId=uuid&title=projeto&createdAfter=2024-01-01T00%3A00%3A00&page=0&size=10&sortBy=createdAt&sortDirection=desc' \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
   --header 'Accept: application/json'
 ```
 
-**Atualizar uma tarefa:**
+**Update a task:**
 ```bash
 curl --request PATCH \
-  --url http://localhost:8080/tarefas/38467321-7573-477b-8695-a9f8d955e597/status \
+  --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/status \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
   --header 'Content-Type: application/json' \
   --data '{     "status": "IN_PROGRESS"   }'
 ```
 
-### **Subtarefas**
+### **Subtasks**
 
-**Criar uma subtarefa:**
+**Create a subtask:**
 ```bash
 curl --request POST \
-  --url http://localhost:8080/tarefas/38467321-7573-477b-8695-a9f8d955e597/subtarefas \
+  --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/subtasks \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -164,26 +164,26 @@ curl --request POST \
 }'
 ```
 
-**Listar subtarefas:**
+**List subtasks:**
 ```bash
 curl --request GET \
-  --url http://localhost:8080/tarefas/38467321-7573-477b-8695-a9f8d955e597/subtarefas \
+  --url http://localhost:8080/tasks/38467321-7573-477b-8695-a9f8d955e597/subtasks \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}'
 ```
 
-**Listar subtarefas com filtros:**
+**List subtasks with filters:**
 ```bash
 curl --request GET \
-  --url 'http://localhost:8080/subtarefas/busca?status=PENDING&taskId=123e4567-e89b-12d3-a456-426614174000&title=exemplo&createdAfter=2024-01-01T00%3A00%3A00&createdBefore=2024-12-31T23%3A59%3A59&page=0&size=10&sort=createdAt&direction=desc' \
+  --url 'http://localhost:8080/subtasks/search?status=PENDING&taskId=123e4567-e89b-12d3-a456-426614174000&title=exemplo&createdAfter=2024-01-01T00%3A00%3A00&createdBefore=2024-12-31T23%3A59%3A59&page=0&size=10&sort=createdAt&direction=desc' \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
   --header 'Accept: application/json' \
   --header 'Content-Type: application/json'
 ```
 
-**Atualizar uma subtarefa:**
+**Update a subtask:**
 ```bash
 curl --request PATCH \
-  --url http://localhost:8080/subtarefas/d0c87edf-714c-45cc-aef3-5b00dbf6c24e/status \
+  --url http://localhost:8080/subtasks/d0c87edf-714c-45cc-aef3-5b00dbf6c24e/status \
   --header 'Authorization: Bearer {SEU_TOKEN_JWT}' \
   --header 'Content-Type: application/json' \
   --data '{     "status": "IN_PROGRESS"   }'
