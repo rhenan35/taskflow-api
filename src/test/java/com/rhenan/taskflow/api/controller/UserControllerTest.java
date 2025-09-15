@@ -5,6 +5,7 @@ import com.rhenan.taskflow.application.dto.request.CreateUserRequest;
 import com.rhenan.taskflow.application.dto.response.UserResponse;
 import com.rhenan.taskflow.application.usecase.user.CreateUserUseCase;
 import com.rhenan.taskflow.application.usecase.user.FindUserByIdUseCase;
+import com.rhenan.taskflow.application.service.JwtTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,6 +39,9 @@ class UserControllerTest {
     @MockitoBean
     private FindUserByIdUseCase findUserByIdUseCase;
 
+    @MockitoBean
+    private JwtTokenService jwtTokenService;
+
     @Test
     void deveCriarUsuarioComSucesso() throws Exception {
         CreateUserRequest request = new CreateUserRequest(
@@ -54,7 +58,7 @@ class UserControllerTest {
         when(createUserUseCase.execute(any(CreateUserRequest.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/usuarios")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -70,7 +74,7 @@ class UserControllerTest {
                 "joao@email.com"
         );
 
-        mockMvc.perform(post("/usuarios")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -83,7 +87,7 @@ class UserControllerTest {
                 null
         );
 
-        mockMvc.perform(post("/usuarios")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -96,7 +100,7 @@ class UserControllerTest {
                 "email-invalido"
         );
 
-        mockMvc.perform(post("/usuarios")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -109,7 +113,7 @@ class UserControllerTest {
                 "joao@email.com"
         );
 
-        mockMvc.perform(post("/usuarios")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -127,7 +131,7 @@ class UserControllerTest {
         when(findUserByIdUseCase.execute(eq(userId)))
                 .thenReturn(response);
 
-        mockMvc.perform(get("/usuarios/{id}", userId))
+        mockMvc.perform(get("/users/{id}", userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId.toString()))
                 .andExpect(jsonPath("$.name").value("Maria Silva"))
